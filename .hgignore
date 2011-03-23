@@ -1,7 +1,8 @@
-relre:bin/*
-relre:obj/*
-relre:TestResults/*
-relre:.suo
-relre:.user
-relre:\w+.pdb
-relre:_ReSharper.*
+syntax: glob
+bin/*
+obj/*
+TestResults/*
+*.suo
+*.user
+*.pdb
+_ReSharper.*
