@@ -90,9 +90,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lucene.Net, Version=2.9.2.2, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Lucene.Net, Version=2.9.2.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Apache-Lucene.Net-2.9.2-incubating\bin\Lucene.Net.dll</HintPath>
+      <HintPath>dll\Lucene.Net.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
