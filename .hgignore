@@ -1,0 +1,7 @@
+relre:bin/*
+relre:obj/*
+relre:TestResults/*
+relre:.suo
+relre:.user
+relre:\w+.pdb
+relre:_ReSharper.*
