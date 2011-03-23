@@ -292,7 +292,7 @@ namespace Lucene.Net.LukeNet.Plugins
 				lstResults.BeginUpdate();
 				try
 				{
-					TokenStream ts = analyzer.TokenStream(new StringReader(txtText.Text));
+					TokenStream ts = analyzer.TokenStream(null, new StringReader(txtText.Text));
 					Token token = ts.Next();
 
 					lstResults.Items.Clear();
