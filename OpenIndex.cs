@@ -150,7 +150,6 @@ namespace Lucene.Net.LukeNet
             // OpenIndex
             // 
             this.AcceptButton = this.buttonOK;
-            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(392, 126);
             this.Controls.Add(this.textPath);

@@ -84,7 +84,6 @@ namespace Lucene.Net.LukeNet
 			// 
 			// About
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(210, 127);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.buttonOK);

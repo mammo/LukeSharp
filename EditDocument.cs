@@ -448,7 +448,6 @@ namespace Lucene.Net.LukeNet
 			// 
 			// EditDocument
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(464, 437);
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
 																		  this.btnCancel,

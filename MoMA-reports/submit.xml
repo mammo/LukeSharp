@@ -3,7 +3,7 @@
   <metadata>
     <definitions>Mono 2.8 (4.0 Profile)</definitions>
     <momaversion>2.0.0.0</momaversion>
-    <date>2011-03-23 21:44:49Z</date>
+    <date>2011-03-23 21:49:20Z</date>
     <name />
     <email />
     <homepage />
@@ -14,57 +14,7 @@
   <assemblies>
     <assembly name="AnalyzerToolPlugin.dll" version="1.0.4097.29047" runtime="2.0" todo="0" niex="0" miss="0" pinv="0" />
     <assembly name="ClassFinder.dll" version="1.0.4097.29047" runtime="2.0" todo="0" niex="0" miss="0" pinv="0" />
-    <assembly name="LukeNet.exe" version="1.0.4099.39001" runtime="2.0" todo="7" niex="0" miss="0" pinv="0">
-      <issue type="todo">
-        <class>OpenIndex</class>
-        <caller>void InitializeComponent()</caller>
-        <method>void set_AutoScaleBaseSize(Size)</method>
-        <raw>System.Void System.Windows.Forms.Form::set_AutoScaleBaseSize(System.Drawing.Size)</raw>
-        <data>Setting this is probably unintentional and can cause Forms to be improperly sized.  See http://www.mono-project.com/FAQ:_Winforms#My_forms_are_sized_improperly for details.</data>
-      </issue>
-      <issue type="todo">
-        <class>ExplanationDialog</class>
-        <caller>void InitializeComponent()</caller>
-        <method>void set_AutoScaleBaseSize(Size)</method>
-        <raw>System.Void System.Windows.Forms.Form::set_AutoScaleBaseSize(System.Drawing.Size)</raw>
-        <data>Setting this is probably unintentional and can cause Forms to be improperly sized.  See http://www.mono-project.com/FAQ:_Winforms#My_forms_are_sized_improperly for details.</data>
-      </issue>
-      <issue type="todo">
-        <class>TermVector</class>
-        <caller>void InitializeComponent()</caller>
-        <method>void set_AutoScaleBaseSize(Size)</method>
-        <raw>System.Void System.Windows.Forms.Form::set_AutoScaleBaseSize(System.Drawing.Size)</raw>
-        <data>Setting this is probably unintentional and can cause Forms to be improperly sized.  See http://www.mono-project.com/FAQ:_Winforms#My_forms_are_sized_improperly for details.</data>
-      </issue>
-      <issue type="todo">
-        <class>Progress</class>
-        <caller>void InitializeComponent()</caller>
-        <method>void set_AutoScaleBaseSize(Size)</method>
-        <raw>System.Void System.Windows.Forms.Form::set_AutoScaleBaseSize(System.Drawing.Size)</raw>
-        <data>Setting this is probably unintentional and can cause Forms to be improperly sized.  See http://www.mono-project.com/FAQ:_Winforms#My_forms_are_sized_improperly for details.</data>
-      </issue>
-      <issue type="todo">
-        <class>Luke</class>
-        <caller>void InitializeComponent()</caller>
-        <method>void set_AutoScaleBaseSize(Size)</method>
-        <raw>System.Void System.Windows.Forms.Form::set_AutoScaleBaseSize(System.Drawing.Size)</raw>
-        <data>Setting this is probably unintentional and can cause Forms to be improperly sized.  See http://www.mono-project.com/FAQ:_Winforms#My_forms_are_sized_improperly for details.</data>
-      </issue>
-      <issue type="todo">
-        <class>EditDocument</class>
-        <caller>void InitializeComponent()</caller>
-        <method>void set_AutoScaleBaseSize(Size)</method>
-        <raw>System.Void System.Windows.Forms.Form::set_AutoScaleBaseSize(System.Drawing.Size)</raw>
-        <data>Setting this is probably unintentional and can cause Forms to be improperly sized.  See http://www.mono-project.com/FAQ:_Winforms#My_forms_are_sized_improperly for details.</data>
-      </issue>
-      <issue type="todo">
-        <class>About</class>
-        <caller>void InitializeComponent()</caller>
-        <method>void set_AutoScaleBaseSize(Size)</method>
-        <raw>System.Void System.Windows.Forms.Form::set_AutoScaleBaseSize(System.Drawing.Size)</raw>
-        <data>Setting this is probably unintentional and can cause Forms to be improperly sized.  See http://www.mono-project.com/FAQ:_Winforms#My_forms_are_sized_improperly for details.</data>
-      </issue>
-    </assembly>
+    <assembly name="LukeNet.exe" version="1.0.4099.39266" runtime="2.0" todo="0" niex="0" miss="0" pinv="0" />
     <assembly name="LukePlugin.dll" version="1.0.4097.29047" runtime="2.0" todo="0" niex="0" miss="0" pinv="0" />
   </assemblies>
 </report>

@@ -138,7 +138,6 @@ namespace Lucene.Net.LukeNet
 			// TermVector
 			// 
 			this.AcceptButton = this.btnOK;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(370, 271);
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
 																		  this.listViewTVF,
