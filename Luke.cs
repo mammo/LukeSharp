@@ -3027,7 +3027,7 @@ namespace Lucene.Net.LukeNet
 			item.SubItems.Add(feature);
 
 			if (f != null)
-				item.SubItems.Add(Lucene.Net.Util.Number.ToString(f.GetBoost()));
+                item.SubItems.Add(f.GetBoost().ToString("0.0####"));
 			else item.SubItems.Add("");
 
 			if (f != null)

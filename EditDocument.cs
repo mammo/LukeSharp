@@ -133,7 +133,7 @@ namespace Lucene.Net.LukeNet
 					}
                     //Lucene.Net_1_4_3_RC3_final: public Field(System.String name, System.String string_Renamed, bool store, bool index, bool token, bool storeTermVector)
                     //Field newField =  new Field(key, sb.ToString(), false, true, false, false);
-                    Field newField = new Field(key, sb.ToString(), Field.Store.NO, Field.Index.UN_TOKENIZED, Field.TermVector.NO);
+                    Field newField = new Field(key, sb.ToString(), Field.Store.NO, Field.Index.NOT_ANALYZED, Field.TermVector.NO);
 					newField.SetBoost(document.GetBoost());
 					fields.Add(newField);
 				}
@@ -481,7 +481,7 @@ namespace Lucene.Net.LukeNet
 			}
 			Field field = (Field)fields[fieldIndex];
 			txtContent.Text = field.StringValue();
-			txtBoost.Text = Lucene.Net.Util.Number.ToString(field.GetBoost());
+			txtBoost.Text = field.GetBoost().ToString("0.0####");
 			chStored.Checked = field.IsStored();
 			chIndexed.Checked = field.IsIndexed();
 			chTokenized.Checked = field.IsTokenized();

@@ -10,14 +10,7 @@ namespace Lucene.Net.LukeNet
             Field.Index fieldIndex;
             if (index)
             {
-                if (token)
-                {
-                    fieldIndex = Field.Index.TOKENIZED;
-                }
-                else
-                {
-                    fieldIndex = Field.Index.UN_TOKENIZED;
-                }
+                fieldIndex = token ? Field.Index.ANALYZED : Field.Index.NOT_ANALYZED;
             }
             else
             {

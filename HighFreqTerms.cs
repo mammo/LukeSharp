@@ -67,11 +67,11 @@ namespace Lucene.Net.LukeNet
 				
 				if (terms.DocFreq() > minFreq) 
 				{
-					tiq.Put(new TermInfo(terms.Term(), terms.DocFreq()));
+                    TermInfo top = (TermInfo)tiq.Add(new TermInfo(terms.Term(), terms.DocFreq()));
 					if (tiq.Size() >= numTerms) 		     // if tiq overfull
 					{
 						tiq.Pop();				     // remove lowest in tiq
-						minFreq = ((TermInfo)tiq.Top()).DocFreq; // reset minFreq
+						minFreq = top.DocFreq; // reset minFreq
 					}
 				}
 			}
