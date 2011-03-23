@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D3D9575E-E802-4CE8-929E-C2A077424A4D}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -90,9 +90,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lucene.Net, Version=1.4.3.4, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Lucene.Net, Version=2.9.2.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>dll\Lucene.Net.dll</HintPath>
+      <HintPath>..\Apache-Lucene.Net-2.9.2-incubating\bin\Lucene.Net.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -142,6 +142,7 @@
     <Compile Include="IntPair.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Legacy.cs" />
     <Compile Include="Luke.cs">
       <SubType>Form</SubType>
     </Compile>

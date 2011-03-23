@@ -22,6 +22,7 @@ using Lucene.Net.QueryParsers;
 using Lucene.Net.Store;
 
 using Lucene.Net.LukeNet.Plugins;
+using System.Collections.Generic;
 
 namespace Lucene.Net.LukeNet
 {
@@ -1949,7 +1950,7 @@ namespace Lucene.Net.LukeNet
 				docid = Int32.Parse(textDocNum.Text);
 				
 				_ShowDoc(+1);
-				indexReader.Delete(docid);
+				indexReader.DeleteDocument(docid);
 				InitOverview();
 			} 
 			catch (Exception exc) 
@@ -2072,7 +2073,7 @@ namespace Lucene.Net.LukeNet
 			try 
 			{
 				buttonShowNextDoc_Click(sender, e);
-				indexReader.Delete(term);
+				indexReader.DeleteDocuments(term);
 			} 
 			catch (Exception exc) 
 			{
@@ -2110,7 +2111,7 @@ namespace Lucene.Net.LukeNet
 				foreach(ListViewItem item in listSearch.SelectedItems)
 				{
 					int docId = Int32.Parse(item.SubItems[1].Text);
-					indexReader.Delete(docId);
+					indexReader.DeleteDocument(docId);
 					listSearch.Items.Remove(item);
 				}
 			}
@@ -2226,7 +2227,7 @@ namespace Lucene.Net.LukeNet
 				}
 				catch(Exception){}
 					
-				Field field = new Field(item.SubItems[0].Text.Trim().Substring(1, item.SubItems[0].Text.Trim().Length - 2), 
+				Field field = Legacy.CreateField(item.SubItems[0].Text.Trim().Substring(1, item.SubItems[0].Text.Trim().Length - 2), 
 					item.SubItems[item.SubItems.Count-1].Text,
 					store,
 					index,
@@ -2285,7 +2286,7 @@ namespace Lucene.Net.LukeNet
 
 				if (i++ > 0) copyText.Append(Environment.NewLine);
 
-				Field field = new Field(item.SubItems[0].Text.Trim().Substring(1, item.SubItems[0].Text.Trim().Length - 2), 
+				Field field = Legacy.CreateField(item.SubItems[0].Text.Trim().Substring(1, item.SubItems[0].Text.Trim().Length - 2), 
 					item.SubItems[item.SubItems.Count-1].Text,
 					store,
 					index,
@@ -2565,7 +2566,7 @@ namespace Lucene.Net.LukeNet
 				
 			DocumentsNumber = indexReader.NumDocs();
 				
-			SetFieldNames(indexReader.GetFieldNames());
+			SetFieldNames(indexReader.GetFieldNames(IndexReader.FieldOption.ALL));
 									
 			TermEnum termsEnum = indexReader.Terms();
 			int i = 0;
@@ -2743,7 +2744,7 @@ namespace Lucene.Net.LukeNet
 			}
 		}
 		
-		private void SetFieldNames(ICollection names)
+		private void SetFieldNames(ICollection<string> names)
 		{
 			indexFields = new String[names.Count];
 			labelFields.Text = names.Count.ToString();
@@ -2755,13 +2756,13 @@ namespace Lucene.Net.LukeNet
 			comboFields.Items.Clear();
 			comboTerms.Items.Clear();
 			
-            foreach(DictionaryEntry name in names)
+            foreach(string name in names)
             {
                 // skip empty field
-                    listFields.Items.Add(new ListViewItem("<" + name.Key + ">"));
-                    comboFields.Items.Add(name.Key);
-                    comboTerms.Items.Add(name.Key);
-                    indexFields[i++] = name.Key.ToString();
+                    listFields.Items.Add(new ListViewItem("<" + name + ">"));
+                    comboFields.Items.Add(name);
+                    comboTerms.Items.Add(name);
+                    indexFields[i++] = name;
             }
 
 			listFields.EndUpdate();
@@ -3395,7 +3396,7 @@ namespace Lucene.Net.LukeNet
 					if (k > 0) sb.Append('\n');
 					sb.Append(f[k].StringValue());
 				}
-				Field field = new Field(indexFields[i], sb.ToString(), f[0].IsStored(), f[0].IsIndexed(), f[0].IsTokenized(), f[0].IsTermVectorStored());
+				Field field = Legacy.CreateField(indexFields[i], sb.ToString(), f[0].IsStored(), f[0].IsIndexed(), f[0].IsTokenized(), f[0].IsTermVectorStored());
 				field.SetBoost(f[0].GetBoost());
 				doc[indexFields[i]] = field;
 				sf.Add(indexFields[i]);

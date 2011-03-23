@@ -131,8 +131,9 @@ namespace Lucene.Net.LukeNet
 							}
 						}
 					}
-
-					Field newField =  new Field(key, sb.ToString(), false, true, false, false);
+                    //Lucene.Net_1_4_3_RC3_final: public Field(System.String name, System.String string_Renamed, bool store, bool index, bool token, bool storeTermVector)
+                    //Field newField =  new Field(key, sb.ToString(), false, true, false, false);
+                    Field newField = new Field(key, sb.ToString(), Field.Store.NO, Field.Index.UN_TOKENIZED, Field.TermVector.NO);
 					newField.SetBoost(document.GetBoost());
 					fields.Add(newField);
 				}
@@ -504,7 +505,7 @@ namespace Lucene.Net.LukeNet
 
 			float boost, 
 				  oldBoost = ((Field)fields[fieldIndex]).GetBoost();
-			Field field = new Field((string)lstFields.SelectedItem, 
+			Field field = Legacy.CreateField((string)lstFields.SelectedItem, 
 						  txtContent.Text,
 						  chStored.Checked,
 						  chIndexed.Checked,
@@ -544,8 +545,10 @@ namespace Lucene.Net.LukeNet
 			if ((index = lstFields.FindString(newName)) == -1)
 			{
 				lstFields.Items.Add(newName);
-				fields.Add(new Field(newName, "", false, false, false));
-				fieldsReconstructed.Add(false);
+                //Lucene.Net_1_4_3_RC3_final: 		public Field(System.String name, System.String string_Renamed, bool store, bool index, bool token):this(name, string_Renamed, store, index, token, false)
+                //fields.Add(new Field(newName, "", false, false, false));
+                fields.Add(new Field(newName, "", Field.Store.NO, Field.Index.NO));
+                fieldsReconstructed.Add(false);
 
 				lstFields.SelectedIndex = lstFields.Items.Count - 1;
 			}
@@ -625,7 +628,7 @@ namespace Lucene.Net.LukeNet
 		{
 			try 
 			{
-				luke.IndexReader.Delete(docNum);
+				luke.IndexReader.DeleteDocument(docNum);
 			} 
 			catch (Exception exc) 
 			{
