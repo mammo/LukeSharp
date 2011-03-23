@@ -24,6 +24,7 @@ namespace Lucene.Net.LukeNet
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+        private FolderBrowserDialog folderBrowser;
 		private Preferences p;
 		public OpenIndex(Preferences p)
 		{
@@ -62,114 +63,121 @@ namespace Lucene.Net.LukeNet
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(OpenIndex));
-			this.label1 = new System.Windows.Forms.Label();
-			this.buttonBrowse = new System.Windows.Forms.Button();
-			this.checkRO = new System.Windows.Forms.CheckBox();
-			this.checkUnlock = new System.Windows.Forms.CheckBox();
-			this.separatorOverview = new System.Windows.Forms.Label();
-			this.buttonOK = new System.Windows.Forms.Button();
-			this.buttonCancel = new System.Windows.Forms.Button();
-			this.textPath = new System.Windows.Forms.ComboBox();
-			this.SuspendLayout();
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(8, 13);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(31, 13);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "&Path:";
-			// 
-			// buttonBrowse
-			// 
-			this.buttonBrowse.Location = new System.Drawing.Point(312, 8);
-			this.buttonBrowse.Name = "buttonBrowse";
-			this.buttonBrowse.TabIndex = 2;
-			this.buttonBrowse.Text = "&Browse...";
-			this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
-			// 
-			// checkRO
-			// 
-			this.checkRO.Location = new System.Drawing.Point(8, 40);
-			this.checkRO.Name = "checkRO";
-			this.checkRO.Size = new System.Drawing.Size(192, 24);
-			this.checkRO.TabIndex = 3;
-			this.checkRO.Text = "Open in &Read-Only mode";
-			// 
-			// checkUnlock
-			// 
-			this.checkUnlock.Location = new System.Drawing.Point(8, 64);
-			this.checkUnlock.Name = "checkUnlock";
-			this.checkUnlock.Size = new System.Drawing.Size(192, 24);
-			this.checkUnlock.TabIndex = 4;
-			this.checkUnlock.Text = "&Force unlock, if locked";
-			// 
-			// separatorOverview
-			// 
-			this.separatorOverview.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.separatorOverview.Location = new System.Drawing.Point(8, 88);
-			this.separatorOverview.Name = "separatorOverview";
-			this.separatorOverview.Size = new System.Drawing.Size(376, 2);
-			this.separatorOverview.TabIndex = 11;
-			// 
-			// buttonOK
-			// 
-			this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.buttonOK.Location = new System.Drawing.Point(232, 96);
-			this.buttonOK.Name = "buttonOK";
-			this.buttonOK.TabIndex = 5;
-			this.buttonOK.Text = "OK";
-			// 
-			// buttonCancel
-			// 
-			this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.buttonCancel.Location = new System.Drawing.Point(312, 96);
-			this.buttonCancel.Name = "buttonCancel";
-			this.buttonCancel.TabIndex = 6;
-			this.buttonCancel.Text = "Cancel";
-			// 
-			// textPath
-			// 
-			this.textPath.Location = new System.Drawing.Point(40, 9);
-			this.textPath.Name = "textPath";
-			this.textPath.Size = new System.Drawing.Size(264, 21);
-			this.textPath.TabIndex = 1;
-			// 
-			// OpenIndex
-			// 
-			this.AcceptButton = this.buttonOK;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.CancelButton = this.buttonCancel;
-			this.ClientSize = new System.Drawing.Size(392, 126);
-			this.Controls.AddRange(new System.Windows.Forms.Control[] {
-																		  this.textPath,
-																		  this.buttonCancel,
-																		  this.buttonOK,
-																		  this.separatorOverview,
-																		  this.checkUnlock,
-																		  this.checkRO,
-																		  this.buttonBrowse,
-																		  this.label1});
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "OpenIndex";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "Path to Index Directory";
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OpenIndex));
+            this.label1 = new System.Windows.Forms.Label();
+            this.buttonBrowse = new System.Windows.Forms.Button();
+            this.checkRO = new System.Windows.Forms.CheckBox();
+            this.checkUnlock = new System.Windows.Forms.CheckBox();
+            this.separatorOverview = new System.Windows.Forms.Label();
+            this.buttonOK = new System.Windows.Forms.Button();
+            this.buttonCancel = new System.Windows.Forms.Button();
+            this.textPath = new System.Windows.Forms.ComboBox();
+            this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
+            this.SuspendLayout();
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(32, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "&Path:";
+            // 
+            // buttonBrowse
+            // 
+            this.buttonBrowse.Location = new System.Drawing.Point(312, 8);
+            this.buttonBrowse.Name = "buttonBrowse";
+            this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
+            this.buttonBrowse.TabIndex = 2;
+            this.buttonBrowse.Text = "&Browse...";
+            this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
+            // 
+            // checkRO
+            // 
+            this.checkRO.Location = new System.Drawing.Point(8, 40);
+            this.checkRO.Name = "checkRO";
+            this.checkRO.Size = new System.Drawing.Size(192, 24);
+            this.checkRO.TabIndex = 3;
+            this.checkRO.Text = "Open in &Read-Only mode";
+            // 
+            // checkUnlock
+            // 
+            this.checkUnlock.Location = new System.Drawing.Point(8, 64);
+            this.checkUnlock.Name = "checkUnlock";
+            this.checkUnlock.Size = new System.Drawing.Size(192, 24);
+            this.checkUnlock.TabIndex = 4;
+            this.checkUnlock.Text = "&Force unlock, if locked";
+            // 
+            // separatorOverview
+            // 
+            this.separatorOverview.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.separatorOverview.Location = new System.Drawing.Point(8, 88);
+            this.separatorOverview.Name = "separatorOverview";
+            this.separatorOverview.Size = new System.Drawing.Size(376, 2);
+            this.separatorOverview.TabIndex = 11;
+            // 
+            // buttonOK
+            // 
+            this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.buttonOK.Location = new System.Drawing.Point(232, 96);
+            this.buttonOK.Name = "buttonOK";
+            this.buttonOK.Size = new System.Drawing.Size(75, 23);
+            this.buttonOK.TabIndex = 5;
+            this.buttonOK.Text = "OK";
+            // 
+            // buttonCancel
+            // 
+            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonCancel.Location = new System.Drawing.Point(312, 96);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.TabIndex = 6;
+            this.buttonCancel.Text = "Cancel";
+            // 
+            // textPath
+            // 
+            this.textPath.Location = new System.Drawing.Point(40, 9);
+            this.textPath.Name = "textPath";
+            this.textPath.Size = new System.Drawing.Size(264, 21);
+            this.textPath.TabIndex = 1;
+            // 
+            // folderBrowser
+            // 
+            this.folderBrowser.Description = "Choose index folder.";
+            this.folderBrowser.ShowNewFolderButton = false;
+            // 
+            // OpenIndex
+            // 
+            this.AcceptButton = this.buttonOK;
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.CancelButton = this.buttonCancel;
+            this.ClientSize = new System.Drawing.Size(392, 126);
+            this.Controls.Add(this.textPath);
+            this.Controls.Add(this.buttonCancel);
+            this.Controls.Add(this.buttonOK);
+            this.Controls.Add(this.separatorOverview);
+            this.Controls.Add(this.checkUnlock);
+            this.Controls.Add(this.checkRO);
+            this.Controls.Add(this.buttonBrowse);
+            this.Controls.Add(this.label1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "OpenIndex";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Path to Index Directory";
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 		#endregion
 
 		private void buttonBrowse_Click(object sender, System.EventArgs e)
 		{
-			FolderBrowser folderBrowser = new FolderBrowser();
-			
 			if (folderBrowser.ShowDialog(this) == DialogResult.OK)
-				textPath.Text = folderBrowser.DirectoryPath;
+				textPath.Text = folderBrowser.SelectedPath;
 		}
 		
 		public bool ReadOnlyIndex
