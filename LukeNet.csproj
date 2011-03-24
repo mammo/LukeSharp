@@ -137,6 +137,7 @@
     <Compile Include="Explanation.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GrowableStringArray.cs" />
     <Compile Include="HighFreqTerms.cs">
       <SubType>Code</SubType>
     </Compile>
