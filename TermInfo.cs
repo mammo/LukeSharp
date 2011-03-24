@@ -4,36 +4,22 @@ namespace Lucene.Net.LukeNet
 {
 	public class TermInfo 
 	{
-		public TermInfo(Term term, int docFrequency) 
-		{
-			this.term = term;
-			docFreq = docFrequency;
-		}
-		
-		public TermInfo(TermInfo ti) 
-		{
-			docFreq = ti.docFreq;
-			term = ti.Term;
-		}
+        public int DocFreq
+        {
+            get;
+            private set;
+        }
 
-		
-		private int docFreq;
-		private Term term;
-		
-		public int DocFreq
+        public Term Term
+        {
+            get;
+            private set;
+        }
+        
+        public TermInfo(Term term, int docFrequency) 
 		{
-			set
-			{ docFreq = value; }
-			get
-			{ return docFreq; }
-		}
-		
-		public Term Term
-		{
-			set
-			{ term = value; }
-			get
-			{ return term; }
+			Term = term;
+			DocFreq = docFrequency;
 		}
 	}
 }

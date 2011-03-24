@@ -144,8 +144,14 @@
     <Compile Include="Luke.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Luke.designer.cs">
+      <DependentUpon>Luke.cs</DependentUpon>
+    </Compile>
     <Compile Include="OpenIndex.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OpenIndex.designer.cs">
+      <DependentUpon>OpenIndex.cs</DependentUpon>
     </Compile>
     <Compile Include="Preferences.cs">
       <SubType>Code</SubType>
