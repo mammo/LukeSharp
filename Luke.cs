@@ -1185,7 +1185,7 @@ namespace Lucene.Net.LukeNet
                 Query q = queryParser.Parse(queryString);
 
                 if (searcher != null) searcher.Close();
-                searcher = new IndexSearcher(dir);
+                searcher = new IndexSearcher(dir, true);
 
                 textParsed.Text = q.ToString();
                 _Search(q, searcher);
@@ -1641,7 +1641,7 @@ namespace Lucene.Net.LukeNet
         #region Files
         public void ShowFiles(FSDirectory dir)
         {
-            String[] files = dir.List();
+            String[] files = dir.ListAll();
 
             listIndexFiles.Items.Clear();
 
@@ -1666,7 +1666,7 @@ namespace Lucene.Net.LukeNet
         private long CalcTotalFileSize(FSDirectory dir)
         {
             long totalFileSize = 0;
-            foreach (string file in dir.List())
+            foreach (string file in dir.ListAll())
             {
                 totalFileSize += dir.FileLength(file);
                 //				FileInfo fi = new FileInfo(file);
