@@ -37,7 +37,7 @@ namespace Lucene.Net.LukeNet
 		{
 			if (dir == null || fields == null) return new TermInfo[0];
         
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, true);
 			TermInfoQueue tiq = new TermInfoQueue(numTerms);
 			TermEnum terms = reader.Terms();
         

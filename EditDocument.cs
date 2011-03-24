@@ -131,8 +131,6 @@ namespace Lucene.Net.LukeNet
 							}
 						}
 					}
-                    //Lucene.Net_1_4_3_RC3_final: public Field(System.String name, System.String string_Renamed, bool store, bool index, bool token, bool storeTermVector)
-                    //Field newField =  new Field(key, sb.ToString(), false, true, false, false);
                     Field newField = new Field(key, sb.ToString(), Field.Store.NO, Field.Index.NOT_ANALYZED, Field.TermVector.NO);
 					newField.SetBoost(document.GetBoost());
 					fields.Add(newField);
@@ -614,7 +612,7 @@ namespace Lucene.Net.LukeNet
 				}
 				try 
 				{
-					luke.IndexReader = IndexReader.Open(dir);
+					luke.IndexReader = IndexReader.Open(dir, true);
 				} 
 				catch (Exception e2) 
 				{
