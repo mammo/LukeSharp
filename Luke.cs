@@ -34,6 +34,7 @@ namespace Lucene.Net.LukeNet
     {
 
         #region Fields
+        public static readonly Lucene.Net.Util.Version LUCENE_VERSION = Lucene.Net.Util.Version.LUCENE_29;
         private string lukeURL = "http://www.getopt.org/luke";
 
         private Progress progressDlg;
@@ -50,7 +51,7 @@ namespace Lucene.Net.LukeNet
         //private IndexSearcher searcher;
         private IndexReader indexReader;
         //private Hashtable fieldNames;
-        private Analyzer stdAnalyzer = new StandardAnalyzer();
+        private Analyzer stdAnalyzer = new StandardAnalyzer(Luke.LUCENE_VERSION);
         private Analyzer analyzer;
         private QueryParser queryParser;
         private String[] indexFields;
@@ -1524,7 +1525,7 @@ namespace Lucene.Net.LukeNet
                 comboFields.SelectedItem = analyzerName;
             }
 
-            return new QueryParser(defField, analyzer);
+            return new QueryParser(Luke.LUCENE_VERSION, defField, analyzer);
         }
         #endregion Private Methods
 

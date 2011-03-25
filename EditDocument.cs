@@ -571,7 +571,7 @@ namespace Lucene.Net.LukeNet
             {
                 analyzerName = "Lucene.Net.Analysis.Standard.StandardAnalyzer";
                 cmbAnalyzers.SelectedItem = analyzerName;
-                a = new StandardAnalyzer();
+                a = new StandardAnalyzer(Luke.LUCENE_VERSION);
             }
             else
             {
@@ -580,7 +580,7 @@ namespace Lucene.Net.LukeNet
                 if (null == a)
                 {
                     luke.ShowStatus(string.Format(resources.GetString("AnalyzerNotFound"), analyzerName));
-                    a = new StandardAnalyzer();
+                    a = new StandardAnalyzer(Luke.LUCENE_VERSION);
                 }
             }
 
