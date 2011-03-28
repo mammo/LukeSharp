@@ -5,6 +5,7 @@ namespace Lucene.Net.LukeNet
 {
     public class Legacy
     {
+        //temporarily put here until usage is analyzed enough to inline
         public static Field CreateField(String name, String string_Renamed, bool store, bool index, bool token, bool storeTermVector)
         {
             Field.Index fieldIndex;
