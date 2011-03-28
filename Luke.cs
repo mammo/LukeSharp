@@ -1774,7 +1774,7 @@ namespace Lucene.Net.LukeNet
             for (int i = 0; i < indexFields.Length; i++)
             {
                 Field[] f = document.GetFields(indexFields[i]);
-                if (f == null || !f[0].IsStored()) continue;
+                if (f == null || f.Length == 0 || !f[0].IsStored()) continue;
                 StringBuilder sb = new StringBuilder();
                 for (int k = 0; k < f.Length; k++)
                 {
