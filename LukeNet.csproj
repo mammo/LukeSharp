@@ -138,6 +138,12 @@
     <Compile Include="Explanation.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FilesTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FilesTabPage.Designer.cs">
+      <DependentUpon>FilesTabPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="GrowableStringArray.cs" />
     <Compile Include="HighFreqTerms.cs">
       <SubType>Code</SubType>

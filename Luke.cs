@@ -698,17 +698,17 @@ namespace Lucene.Net.LukeNet
                     new WhitespaceAnalyzer(),
                     false);
                 writer.SetUseCompoundFile(useCompound);
-                long startSize = CalcTotalFileSize(dir);
+                long startSize = FilesTabPage.CalcTotalFileSize(dir);
                 DateTime startTime = DateTime.Now;
                 writer.Optimize();
                 DateTime endTime = DateTime.Now;
-                long endSize = CalcTotalFileSize(dir);
+                long endSize = FilesTabPage.CalcTotalFileSize(dir);
                 long deltaSize = startSize - endSize;
                 String sign = deltaSize < 0 ? " Increased " : " Reduced ";
-                String sizeMsg = sign + NormalizeSize(Math.Abs(deltaSize)) + NormalizeUnit(Math.Abs(deltaSize));
+                String sizeMsg = sign + FilesTabPage.NormalizeSize(Math.Abs(deltaSize)) + FilesTabPage.NormalizeUnit(Math.Abs(deltaSize));
                 String timeMsg = ((TimeSpan)(endTime - startTime)).TotalMilliseconds + " ms";
                 ShowStatus(sizeMsg + " in " + timeMsg);
-                ShowFiles(dir);
+                tabFiles.ShowFiles(dir);
                 writer.Close();
                 indexReader = IndexReader.Open(dir, true);
 
@@ -1018,7 +1018,7 @@ namespace Lucene.Net.LukeNet
                 }
 
                 // files tab
-                ShowFiles(dir);
+                tabFiles.ShowFiles(dir);
 
                 indexReader = IndexReader.Open(dir, true);
 
@@ -1454,81 +1454,6 @@ namespace Lucene.Net.LukeNet
         }
         #endregion Private Methods
 
-        #region Files
-        public void ShowFiles(FSDirectory dir)
-        {
-            String[] files = dir.ListAll();
-
-            listIndexFiles.Items.Clear();
-
-            foreach (string file in files)
-            {
-                //				FileInfo fi = new FileInfo(file);
-
-                ListViewItem row = new ListViewItem(
-                    new string[]
-					{
-						file, //fi.Name,
-						NormalizeSize(dir.FileLength(file)),
-						NormalizeUnit(dir.FileLength(file))
-					});
-                listIndexFiles.Items.Add(row);
-            }
-
-            long totalFileSize = CalcTotalFileSize(dir);
-            lblFileSize.Text = NormalizeSize(totalFileSize) + NormalizeUnit(totalFileSize);
-        }
-
-        private long CalcTotalFileSize(FSDirectory dir)
-        {
-            long totalFileSize = 0;
-            foreach (string file in dir.ListAll())
-            {
-                totalFileSize += dir.FileLength(file);
-                //				FileInfo fi = new FileInfo(file);
-                //				totalFileSize += fi.Length;
-            }
-
-            return totalFileSize;
-        }
-
-        private String NormalizeUnit(long len)
-        {
-            if (len == 1)
-            {
-                return "Byte";
-            }
-            else if (len < 1024)
-            {
-                return "Bytes";
-            }
-            else if (len < 51200000)
-            {
-                return "Kb";
-            }
-            else
-            {
-                return "Mb";
-            }
-        }
-
-        private String NormalizeSize(long len)
-        {
-            if (len < 1024)
-            {
-                return len.ToString();
-            }
-            else if (len < 51200000)
-            {
-                return ((long)(len / 1024)).ToString();
-            }
-            else
-            {
-                return ((long)(len / 102400)).ToString();
-            }
-        }
-        #endregion Files
-
         #region Document reconstruction
         private void btnReconstruct_Click(object sender, System.EventArgs e)
         {
@@ -1566,7 +1491,6 @@ namespace Lucene.Net.LukeNet
             if (editDocDlg.DialogResult == DialogResult.OK)
             {
                 InitOverview();
-                //TODO: needed? InitPlugins();
             }
         }
 

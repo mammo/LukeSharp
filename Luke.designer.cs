@@ -124,13 +124,7 @@ namespace Lucene.Net.LukeNet
         private System.Windows.Forms.Label labelAnalyzer;
         private System.Windows.Forms.TextBox textSearch;
         private System.Windows.Forms.Label labelSearchExpr;
-        private System.Windows.Forms.TabPage tabFiles;
-        private System.Windows.Forms.Label labelIndexSize;
-        private System.Windows.Forms.Label lblFileSize;
-        private System.Windows.Forms.ListView listIndexFiles;
-        private System.Windows.Forms.ColumnHeader columnFilename;
-        private System.Windows.Forms.ColumnHeader columnSize;
-        private System.Windows.Forms.ColumnHeader columnUnit;
+        private LukeNet.FilesTabPage tabFiles;
         private System.Windows.Forms.ColumnHeader columnHeaderBoost;
         private System.Windows.Forms.TextBox textParsed;
 
@@ -260,13 +254,7 @@ namespace Lucene.Net.LukeNet
             this.columnHeaderDocId = new System.Windows.Forms.ColumnHeader();
             this.buttonSearchDelete = new System.Windows.Forms.Button();
             this.buttonSearch = new System.Windows.Forms.Button();
-            this.tabFiles = new System.Windows.Forms.TabPage();
-            this.listIndexFiles = new System.Windows.Forms.ListView();
-            this.columnFilename = new System.Windows.Forms.ColumnHeader();
-            this.columnSize = new System.Windows.Forms.ColumnHeader();
-            this.columnUnit = new System.Windows.Forms.ColumnHeader();
-            this.lblFileSize = new System.Windows.Forms.Label();
-            this.labelIndexSize = new System.Windows.Forms.Label();
+            this.tabFiles = new LukeNet.FilesTabPage();
             this.pluginsTabPage = new LukeNet.PluginsTabPage();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).BeginInit();
@@ -1405,66 +1393,12 @@ namespace Lucene.Net.LukeNet
             // 
             // tabFiles
             // 
-            this.tabFiles.Controls.Add(this.listIndexFiles);
-            this.tabFiles.Controls.Add(this.lblFileSize);
-            this.tabFiles.Controls.Add(this.labelIndexSize);
             this.tabFiles.ImageIndex = 4;
             this.tabFiles.Location = new System.Drawing.Point(4, 23);
             this.tabFiles.Name = "tabFiles";
             this.tabFiles.Size = new System.Drawing.Size(752, 509);
             this.tabFiles.TabIndex = 3;
             this.tabFiles.Text = "Files";
-            // 
-            // listIndexFiles
-            // 
-            this.listIndexFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.listIndexFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnFilename,
-            this.columnSize,
-            this.columnUnit});
-            this.listIndexFiles.FullRowSelect = true;
-            this.listIndexFiles.GridLines = true;
-            this.listIndexFiles.Location = new System.Drawing.Point(8, 32);
-            this.listIndexFiles.MultiSelect = false;
-            this.listIndexFiles.Name = "listIndexFiles";
-            this.listIndexFiles.Size = new System.Drawing.Size(736, 469);
-            this.listIndexFiles.TabIndex = 2;
-            this.listIndexFiles.UseCompatibleStateImageBehavior = false;
-            this.listIndexFiles.View = System.Windows.Forms.View.Details;
-            // 
-            // columnFilename
-            // 
-            this.columnFilename.Text = "Filename";
-            this.columnFilename.Width = 300;
-            // 
-            // columnSize
-            // 
-            this.columnSize.Text = "Size";
-            this.columnSize.Width = 100;
-            // 
-            // columnUnit
-            // 
-            this.columnUnit.Text = "";
-            // 
-            // lblFileSize
-            // 
-            this.lblFileSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lblFileSize.Location = new System.Drawing.Point(96, 8);
-            this.lblFileSize.Name = "lblFileSize";
-            this.lblFileSize.Size = new System.Drawing.Size(88, 13);
-            this.lblFileSize.TabIndex = 1;
-            this.lblFileSize.Text = "?";
-            // 
-            // labelIndexSize
-            // 
-            this.labelIndexSize.AutoSize = true;
-            this.labelIndexSize.Location = new System.Drawing.Point(8, 8);
-            this.labelIndexSize.Name = "labelIndexSize";
-            this.labelIndexSize.Size = new System.Drawing.Size(86, 13);
-            this.labelIndexSize.TabIndex = 0;
-            this.labelIndexSize.Text = "Total Index Size:";
             // 
             // pluginsTabPage
             // 
@@ -1507,6 +1441,7 @@ namespace Lucene.Net.LukeNet
             this.tabFiles.ResumeLayout(false);
             this.tabFiles.PerformLayout();
             this.pluginsTabPage.ResumeLayout(false);
+            this.pluginsTabPage.PerformLayout();
             this.ResumeLayout(false);
 
         }
