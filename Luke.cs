@@ -1664,43 +1664,6 @@ namespace Lucene.Net.LukeNet
         }
         #endregion Document reconstruction
 
-        #region class ListViewItemComparer
-        internal class ListViewItemComparer : IComparer
-        {
-            private int col;
-            public ListViewItemComparer()
-            {
-                col = 0;
-            }
-            public ListViewItemComparer(int column)
-            {
-                col = column;
-            }
-            public int Compare(object x, object y)
-            {
-                ListViewItem itemX = x as ListViewItem;
-                ListViewItem itemY = y as ListViewItem;
-
-                Debug.Assert(itemX != null && itemY != null);
-
-                // First two columns - numbers
-                if (col == 0 || col == 1)
-                {
-                    try
-                    {
-                        return Int32.Parse(itemX.SubItems[col].Text) -
-                               Int32.Parse(itemY.SubItems[col].Text);
-                    }
-                    catch (Exception)
-                    { }
-                }
-
-                return String.Compare(itemX.SubItems[col].Text,
-                                      itemY.SubItems[col].Text);
-            }
-        }
-        #endregion class ListViewItemComparer
-
         #region Cleanup
         /// <summary>
         /// Clean up any resources being used.

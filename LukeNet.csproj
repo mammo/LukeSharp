@@ -143,6 +143,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Legacy.cs" />
+    <Compile Include="ListViewItemComparer.cs" />
     <Compile Include="Luke.cs">
       <SubType>Form</SubType>
     </Compile>
