@@ -575,7 +575,7 @@ namespace Lucene.Net.LukeNet
             }
             else
             {
-                a = luke.AnalyzerForName(analyzerName);
+                a = Analyzing.GetAnalyzerForName(analyzerName);
 
                 if (null == a)
                 {

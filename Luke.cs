@@ -23,6 +23,7 @@ using Lucene.Net.Store;
 
 using Lucene.Net.LukeNet.Plugins;
 using System.Collections.Generic;
+using Lucene.Net.LukeNet.Plugins;
 
 namespace Lucene.Net.LukeNet
 {
@@ -48,27 +49,13 @@ namespace Lucene.Net.LukeNet
         private TermDocs termDocs;
         private bool readOnly;
         private FSDirectory dir;
-        //private IndexSearcher searcher;
         private IndexReader indexReader;
-        //private Hashtable fieldNames;
         private Analyzer stdAnalyzer = new StandardAnalyzer(Luke.LUCENE_VERSION);
         private Analyzer analyzer;
         private QueryParser queryParser;
         private String[] indexFields;
         private bool useCompound;
         private int numTerms;
-        private SortedList analyzers = new SortedList(); // Name -> Type
-        private Type[] defaultAnalyzers = 
-			{
-//				typeof(Lucene.Net.Analysis.De.GermanAnalyzer),
-//				typeof(Lucene.Net.Analysis.Ru.RussianAnalyzer),
-				typeof(Lucene.Net.Analysis.SimpleAnalyzer),
-				typeof(Lucene.Net.Analysis.Standard.StandardAnalyzer),
-				typeof(Lucene.Net.Analysis.StopAnalyzer),
-				typeof(Lucene.Net.Analysis.WhitespaceAnalyzer)
-			};
-        private System.Windows.Forms.ColumnHeader columnHeaderBoost;
-        private System.Windows.Forms.TextBox textParsed;
 
         private ResourceManager resources = new ResourceManager
             (
@@ -537,7 +524,9 @@ namespace Lucene.Net.LukeNet
         }
         private void btnUpdateParsedQuery_Click(object sender, System.EventArgs e)
         {
-            QueryParser qp = CreateQueryParser();
+            string analyzerName = Analyzing.GetAnalyzerName((string)comboAnalyzer.SelectedItem);
+            comboAnalyzer.SelectedItem = analyzerName;
+            QueryParser qp = CreateQueryParser(analyzerName);
             String queryS = textSearch.Text;
 
             if (queryS.Trim() == "")
@@ -928,16 +917,8 @@ namespace Lucene.Net.LukeNet
         {
             cbAnalyzers.BeginUpdate();
             cbAnalyzers.Items.Clear();
-
-            string[] aNames = new String[analyzers.Count];
-            analyzers.Keys.CopyTo(aNames, 0);
-            cbAnalyzers.Items.AddRange(aNames);
+            cbAnalyzers.Items.AddRange(Analyzing.GetAnalyzerNames().ToArray());
             cbAnalyzers.EndUpdate();
-        }
-
-        public IDictionary GetAnalyzers()
-        {
-            return analyzers;
         }
 
         internal void InitOverview()
@@ -1046,34 +1027,6 @@ namespace Lucene.Net.LukeNet
 
                 menuItemCompound.Checked = p.UseCompound;
 
-                // load analyzers
-                try
-                {
-
-                    Type[] analyzerTypes = null;
-                    try
-                    {
-                        analyzerTypes = Lucene.Net.LukeNet.ClassFinder.ClassFinder.GetInstantiableSubtypes(typeof(Lucene.Net.Analysis.Analyzer));
-                    }
-                    catch (Exception) { }
-
-                    if (analyzerTypes == null || analyzerTypes.Length == 0)
-                    {
-                        // using default
-                        foreach (Type t in defaultAnalyzers)
-                            analyzers[t.FullName] = t;
-                    }
-                    else
-                    {
-                        foreach (Type aType in analyzerTypes)
-                            analyzers[aType.FullName] = aType;
-                    }
-                }
-                catch (Exception e)
-                {
-                    ErrorMessage(e.Message);
-                }
-
                 // plugins tab
                 LoadPlugins();
                 InitPlugins();
@@ -1165,8 +1118,9 @@ namespace Lucene.Net.LukeNet
 
             Cursor.Current = Cursors.WaitCursor;
 
-            queryParser = CreateQueryParser();
-
+            string analyzerName = Analyzing.GetAnalyzerName((string)comboAnalyzer.SelectedItem);
+            comboAnalyzer.SelectedItem = analyzerName;
+            queryParser = CreateQueryParser(analyzerName);
 
             string queryString = textSearch.Text;
             if (queryString == string.Empty)
@@ -1481,37 +1435,10 @@ namespace Lucene.Net.LukeNet
                 ShowStatus(e.Message);
             }
         }
-        public Analyzer AnalyzerForName(string analyzerName)
+
+        private QueryParser CreateQueryParser(string analyzerName)
         {
-            try
-            {
-                // Trying to create type from executing assembly
-                Type analyzerType = (Type)analyzers[analyzerName];
-
-                if (null == analyzerType)
-                {
-                    // Trying to create type from Lucene.Net assembly
-                    Assembly a = Assembly.GetAssembly(typeof(Lucene.Net.Analysis.Analyzer));
-                    analyzerType = a.GetType(analyzerName);
-                }
-
-                // Trying to create with default constructor
-                return (Analyzer)Activator.CreateInstance(analyzerType);
-            }
-            catch (Exception)
-            { return null; }
-        }
-
-        private QueryParser CreateQueryParser()
-        {
-            string analyzerName = (string)comboAnalyzer.SelectedItem;
-            if (null == analyzerName || analyzerName == string.Empty)
-            {
-                analyzerName = "Lucene.Net.Luca.Analysis.Standard.StandardAnalyzer";
-                comboAnalyzer.SelectedItem = analyzerName;
-            }
-
-            analyzer = AnalyzerForName(analyzerName);
+            analyzer = Analyzing.GetAnalyzerForName(analyzerName);
             if (null == analyzer)
             {
                 ErrorMessage(string.Format(resources.GetString("AnalyzerNotFound"), analyzerName));
@@ -1537,7 +1464,7 @@ namespace Lucene.Net.LukeNet
             try
             {
                 Type[] types =
-                    Lucene.Net.LukeNet.ClassFinder.ClassFinder.GetInstantiableSubtypes(typeof(Lucene.Net.LukeNet.Plugins.LukePlugin));
+                    Lucene.Net.LukeNet.ClassFinder.ClassFinder.GetInstantiableSubtypes(typeof(LukePlugin));
                 foreach (Type type in types)
                 {
                     pluginTypes.Add(type, null);

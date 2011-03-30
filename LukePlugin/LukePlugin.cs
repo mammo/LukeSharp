@@ -50,7 +50,7 @@ namespace Lucene.Net.LukeNet.Plugins
 		/// <summary>
 		/// Initialize this component. Parent view, this view,
 		/// directory and index reader should already be initialized.
-		/// <br>This method will be called repeatedly, whenever new
+		/// This method will be called repeatedly, whenever new
 		/// index is loaded into Luke.
 		/// </summary>
 		/// <returns>true on success, false on non-catastrophic failure</returns>
