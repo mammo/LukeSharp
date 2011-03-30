@@ -131,15 +131,10 @@ namespace Lucene.Net.LukeNet
         private System.Windows.Forms.ColumnHeader columnFilename;
         private System.Windows.Forms.ColumnHeader columnSize;
         private System.Windows.Forms.ColumnHeader columnUnit;
-        private System.Windows.Forms.TabPage tabPlugins;
-        private System.Windows.Forms.ListBox lstPlugins;
-        private System.Windows.Forms.GroupBox groupPlugin;
-        private System.Windows.Forms.GroupBox groupPluginInfo;
-        private System.Windows.Forms.Label lblPluginInfo;
-        private System.Windows.Forms.LinkLabel linkPluginURL;
-        private System.Windows.Forms.Panel panelPlugin;
         private System.Windows.Forms.ColumnHeader columnHeaderBoost;
         private System.Windows.Forms.TextBox textParsed;
+
+        private LukeNet.PluginsTabPage pluginsTabPage;
         #endregion Private UI Controls
 
         #region Windows Form Designer generated code
@@ -167,6 +162,9 @@ namespace Lucene.Net.LukeNet
             this.statusBarPanelIndex = new System.Windows.Forms.StatusBarPanel();
             this.statusBarPanelMessage = new System.Windows.Forms.StatusBarPanel();
             this.statusBarPanelLogo = new System.Windows.Forms.StatusBarPanel();
+            this.contextMenu = new System.Windows.Forms.ContextMenu();
+            this.imageList = new System.Windows.Forms.ImageList(this.components);
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabOverview = new System.Windows.Forms.TabPage();
             this.labelVersion = new System.Windows.Forms.Label();
@@ -180,7 +178,6 @@ namespace Lucene.Net.LukeNet
             this.columnHeaderTopTermRank = new System.Windows.Forms.ColumnHeader();
             this.columnHeaderTopTermField = new System.Windows.Forms.ColumnHeader();
             this.columnHeaderTopTermText = new System.Windows.Forms.ColumnHeader();
-            this.contextMenu = new System.Windows.Forms.ContextMenu();
             this.labelTopTerms = new System.Windows.Forms.Label();
             this.domainTerms = new System.Windows.Forms.DomainUpDown();
             this.labelNumOfTerms = new System.Windows.Forms.Label();
@@ -223,7 +220,6 @@ namespace Lucene.Net.LukeNet
             this.labelDocNum = new System.Windows.Forms.Label();
             this.labelDoc = new System.Windows.Forms.Label();
             this.buttonDeleteAllDocs = new System.Windows.Forms.Button();
-            this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.buttonShowAllDocs = new System.Windows.Forms.Button();
             this.buttonShowNextDoc = new System.Windows.Forms.Button();
             this.buttonShowFirstDoc = new System.Windows.Forms.Button();
@@ -271,14 +267,7 @@ namespace Lucene.Net.LukeNet
             this.columnUnit = new System.Windows.Forms.ColumnHeader();
             this.lblFileSize = new System.Windows.Forms.Label();
             this.labelIndexSize = new System.Windows.Forms.Label();
-            this.tabPlugins = new System.Windows.Forms.TabPage();
-            this.groupPlugin = new System.Windows.Forms.GroupBox();
-            this.panelPlugin = new System.Windows.Forms.Panel();
-            this.groupPluginInfo = new System.Windows.Forms.GroupBox();
-            this.linkPluginURL = new System.Windows.Forms.LinkLabel();
-            this.lblPluginInfo = new System.Windows.Forms.Label();
-            this.lstPlugins = new System.Windows.Forms.ListBox();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.pluginsTabPage = new LukeNet.PluginsTabPage();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelLogo)).BeginInit();
@@ -290,9 +279,7 @@ namespace Lucene.Net.LukeNet
             this.tabSearch.SuspendLayout();
             this.groupSearchOptions.SuspendLayout();
             this.tabFiles.SuspendLayout();
-            this.tabPlugins.SuspendLayout();
-            this.groupPlugin.SuspendLayout();
-            this.groupPluginInfo.SuspendLayout();
+            this.pluginsTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainMenu
@@ -377,7 +364,7 @@ namespace Lucene.Net.LukeNet
             // 
             // statusBar
             // 
-            this.statusBar.Location = new System.Drawing.Point(0, 543);
+            this.statusBar.Location = new System.Drawing.Point(0, 532);
             this.statusBar.Name = "statusBar";
             this.statusBar.Panels.AddRange(new System.Windows.Forms.StatusBarPanel[] {
             this.statusBarPanelIndex,
@@ -413,6 +400,17 @@ namespace Lucene.Net.LukeNet
             this.statusBarPanelLogo.ToolTipText = "Go to Luke homepage";
             this.statusBarPanelLogo.Width = 31;
             // 
+            // imageList
+            // 
+            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
+            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList.Images.SetKeyName(0, "");
+            this.imageList.Images.SetKeyName(1, "");
+            this.imageList.Images.SetKeyName(2, "");
+            this.imageList.Images.SetKeyName(3, "");
+            this.imageList.Images.SetKeyName(4, "");
+            this.imageList.Images.SetKeyName(5, "");
+            // 
             // tabControl
             // 
             this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -422,12 +420,12 @@ namespace Lucene.Net.LukeNet
             this.tabControl.Controls.Add(this.tabDocuments);
             this.tabControl.Controls.Add(this.tabSearch);
             this.tabControl.Controls.Add(this.tabFiles);
-            this.tabControl.Controls.Add(this.tabPlugins);
+            this.tabControl.Controls.Add(this.pluginsTabPage);
             this.tabControl.ImageList = this.imageList;
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(760, 536);
+            this.tabControl.Size = new System.Drawing.Size(760, 525);
             this.tabControl.TabIndex = 0;
             this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
@@ -460,7 +458,7 @@ namespace Lucene.Net.LukeNet
             this.tabOverview.ImageIndex = 0;
             this.tabOverview.Location = new System.Drawing.Point(4, 23);
             this.tabOverview.Name = "tabOverview";
-            this.tabOverview.Size = new System.Drawing.Size(752, 509);
+            this.tabOverview.Size = new System.Drawing.Size(752, 498);
             this.tabOverview.TabIndex = 0;
             this.tabOverview.Text = "Overview";
             this.tabOverview.Resize += new System.EventHandler(this.tabOverview_Resize);
@@ -518,7 +516,7 @@ namespace Lucene.Net.LukeNet
             this.listFields.Location = new System.Drawing.Point(8, 184);
             this.listFields.MultiSelect = false;
             this.listFields.Name = "listFields";
-            this.listFields.Size = new System.Drawing.Size(88, 317);
+            this.listFields.Size = new System.Drawing.Size(88, 306);
             this.listFields.TabIndex = 14;
             this.listFields.UseCompatibleStateImageBehavior = false;
             this.listFields.View = System.Windows.Forms.View.Details;
@@ -544,7 +542,7 @@ namespace Lucene.Net.LukeNet
             this.listTerms.Location = new System.Drawing.Point(224, 184);
             this.listTerms.MultiSelect = false;
             this.listTerms.Name = "listTerms";
-            this.listTerms.Size = new System.Drawing.Size(520, 317);
+            this.listTerms.Size = new System.Drawing.Size(520, 306);
             this.listTerms.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listTerms.TabIndex = 19;
             this.listTerms.UseCompatibleStateImageBehavior = false;
@@ -992,17 +990,6 @@ namespace Lucene.Net.LukeNet
             this.buttonDeleteAllDocs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.toolTip.SetToolTip(this.buttonDeleteAllDocs, "Delete all docs with this term (NO WARNING!)");
             this.buttonDeleteAllDocs.Click += new System.EventHandler(this.buttonDeleteAllDocs_Click);
-            // 
-            // imageList
-            // 
-            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "");
-            this.imageList.Images.SetKeyName(1, "");
-            this.imageList.Images.SetKeyName(2, "");
-            this.imageList.Images.SetKeyName(3, "");
-            this.imageList.Images.SetKeyName(4, "");
-            this.imageList.Images.SetKeyName(5, "");
             // 
             // buttonShowAllDocs
             // 
@@ -1479,86 +1466,20 @@ namespace Lucene.Net.LukeNet
             this.labelIndexSize.TabIndex = 0;
             this.labelIndexSize.Text = "Total Index Size:";
             // 
-            // tabPlugins
+            // pluginsTabPage
             // 
-            this.tabPlugins.Controls.Add(this.groupPlugin);
-            this.tabPlugins.Controls.Add(this.lstPlugins);
-            this.tabPlugins.ImageIndex = 5;
-            this.tabPlugins.Location = new System.Drawing.Point(4, 23);
-            this.tabPlugins.Name = "tabPlugins";
-            this.tabPlugins.Size = new System.Drawing.Size(752, 509);
-            this.tabPlugins.TabIndex = 4;
-            this.tabPlugins.Text = "Plugins";
-            // 
-            // groupPlugin
-            // 
-            this.groupPlugin.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupPlugin.Controls.Add(this.panelPlugin);
-            this.groupPlugin.Controls.Add(this.groupPluginInfo);
-            this.groupPlugin.Location = new System.Drawing.Point(128, 16);
-            this.groupPlugin.Name = "groupPlugin";
-            this.groupPlugin.Size = new System.Drawing.Size(616, 485);
-            this.groupPlugin.TabIndex = 2;
-            this.groupPlugin.TabStop = false;
-            // 
-            // panelPlugin
-            // 
-            this.panelPlugin.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelPlugin.Location = new System.Drawing.Point(8, 64);
-            this.panelPlugin.Name = "panelPlugin";
-            this.panelPlugin.Size = new System.Drawing.Size(600, 413);
-            this.panelPlugin.TabIndex = 1;
-            // 
-            // groupPluginInfo
-            // 
-            this.groupPluginInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupPluginInfo.BackColor = System.Drawing.SystemColors.Control;
-            this.groupPluginInfo.Controls.Add(this.linkPluginURL);
-            this.groupPluginInfo.Controls.Add(this.lblPluginInfo);
-            this.groupPluginInfo.Location = new System.Drawing.Point(8, 8);
-            this.groupPluginInfo.Name = "groupPluginInfo";
-            this.groupPluginInfo.Size = new System.Drawing.Size(600, 48);
-            this.groupPluginInfo.TabIndex = 0;
-            this.groupPluginInfo.TabStop = false;
-            // 
-            // linkPluginURL
-            // 
-            this.linkPluginURL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.linkPluginURL.Location = new System.Drawing.Point(424, 16);
-            this.linkPluginURL.Name = "linkPluginURL";
-            this.linkPluginURL.Size = new System.Drawing.Size(160, 23);
-            this.linkPluginURL.TabIndex = 1;
-            this.linkPluginURL.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.linkPluginURL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkPluginURL_LinkClicked);
-            // 
-            // lblPluginInfo
-            // 
-            this.lblPluginInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblPluginInfo.Location = new System.Drawing.Point(8, 16);
-            this.lblPluginInfo.Name = "lblPluginInfo";
-            this.lblPluginInfo.Size = new System.Drawing.Size(408, 24);
-            this.lblPluginInfo.TabIndex = 0;
-            this.lblPluginInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lstPlugins
-            // 
-            this.lstPlugins.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
-            this.lstPlugins.Location = new System.Drawing.Point(8, 16);
-            this.lstPlugins.Name = "lstPlugins";
-            this.lstPlugins.Size = new System.Drawing.Size(112, 485);
-            this.lstPlugins.TabIndex = 1;
-            this.lstPlugins.SelectedIndexChanged += new System.EventHandler(this.lstPlugins_SelectedIndexChanged);
+            this.pluginsTabPage.Directory = null;
+            this.pluginsTabPage.ImageIndex = 5;
+            this.pluginsTabPage.IndexReader = null;
+            this.pluginsTabPage.Location = new System.Drawing.Point(4, 23);
+            this.pluginsTabPage.Name = "pluginsTabPage";
+            this.pluginsTabPage.Size = new System.Drawing.Size(752, 509);
+            this.pluginsTabPage.TabIndex = 4;
+            this.pluginsTabPage.Text = "Plugins";
             // 
             // Luke
             // 
-            this.ClientSize = new System.Drawing.Size(760, 565);
+            this.ClientSize = new System.Drawing.Size(760, 554);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.statusBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1585,9 +1506,7 @@ namespace Lucene.Net.LukeNet
             this.groupSearchOptions.PerformLayout();
             this.tabFiles.ResumeLayout(false);
             this.tabFiles.PerformLayout();
-            this.tabPlugins.ResumeLayout(false);
-            this.groupPlugin.ResumeLayout(false);
-            this.groupPluginInfo.ResumeLayout(false);
+            this.pluginsTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

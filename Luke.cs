@@ -7,6 +7,7 @@ using System.Threading;
 using System.Resources;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -20,9 +21,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Store;
-
-using Lucene.Net.LukeNet.Plugins;
-using System.Collections.Generic;
 using Lucene.Net.LukeNet.Plugins;
 
 namespace Lucene.Net.LukeNet
@@ -43,7 +41,6 @@ namespace Lucene.Net.LukeNet
         private int[] searchedDocIds;
         private string indexPath;
         private Preferences p;
-        private ArrayList plugins = new ArrayList();
         private Document document;
         private Term term;
         private TermDocs termDocs;
@@ -1028,8 +1025,9 @@ namespace Lucene.Net.LukeNet
                 menuItemCompound.Checked = p.UseCompound;
 
                 // plugins tab
-                LoadPlugins();
-                InitPlugins();
+                pluginsTabPage.LoadPlugins();
+                pluginsTabPage.Directory = dir;
+                pluginsTabPage.IndexReader = indexReader;
 
                 // overview tab
                 InitOverview();
@@ -1456,116 +1454,6 @@ namespace Lucene.Net.LukeNet
         }
         #endregion Private Methods
 
-        #region Plugins
-        private void LoadPlugins()
-        {
-            Hashtable pluginTypes = new Hashtable();
-            // try to find all plugins
-            try
-            {
-                Type[] types =
-                    Lucene.Net.LukeNet.ClassFinder.ClassFinder.GetInstantiableSubtypes(typeof(LukePlugin));
-                foreach (Type type in types)
-                {
-                    pluginTypes.Add(type, null);
-                }
-            }
-            catch (Exception) { }
-
-            // load plugins declared in the ".plugins" file
-            try
-            {
-                StreamReader reader = new StreamReader(".plugins");
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    if (line.StartsWith("#")) continue;
-                    if (line.Trim().Equals("")) continue;
-
-                    Type t = Type.GetType(line, false);
-                    if (t.IsSubclassOf(typeof(LukePlugin)) && !pluginTypes.Contains(t))
-                    {
-                        pluginTypes.Add(t, null);
-                    }
-                }
-            }
-            catch (IOException)
-            { }
-
-            foreach (Type pluginType in pluginTypes.Keys)
-            {
-                try
-                {
-                    LukePlugin plugin = (LukePlugin)pluginType.GetConstructor(new Type[] { }).Invoke(new Object[] { });
-                    plugins.Add(plugin);
-                }
-                catch (Exception)
-                { }
-            }
-            if (plugins.Count == 0) return;
-            InitPlugins();
-        }
-
-        internal void InitPlugins()
-        {
-            ClearePluginsUI();
-
-            foreach (LukePlugin plugin in plugins)
-            {
-                plugin.SetDirectory(dir);
-                plugin.SetIndexReader(indexReader);
-                try
-                {
-                    plugin.Init();
-                    plugin.Anchor = AnchorStyles.Bottom | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-                }
-                catch (Exception e)
-                {
-                    plugins.Remove(plugin);
-                    ShowStatus("PLUGIN ERROR: " + e.Message);
-                }
-                lstPlugins.Items.Add(plugin.GetPluginName());
-            }
-
-            if (lstPlugins.Items.Count > 0)
-            {
-                lstPlugins.SelectedIndex = 0;
-            }
-        }
-
-        private void ClearePluginsUI()
-        {
-            lstPlugins.Items.Clear();
-            panelPlugin.Controls.Clear();
-            lblPluginInfo.Text = "";
-            linkPluginURL.Text = "";
-            linkPluginURL.Links.Clear();
-
-        }
-
-        public void LoadPluginTab(LukePlugin plugin)
-        {
-            lblPluginInfo.Text = plugin.GetPluginInfo();
-            linkPluginURL.Text = plugin.GetPluginHome();
-            linkPluginURL.Links.Clear();
-            linkPluginURL.Links.Add(0, linkPluginURL.Text.Length, linkPluginURL.Text);
-
-            plugin.Size = panelPlugin.Size;
-            panelPlugin.Controls.Clear();
-            panelPlugin.Controls.Add(plugin);
-        }
-        private void lstPlugins_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            LoadPluginTab((LukePlugin)plugins[lstPlugins.SelectedIndex]);
-        }
-
-        private void linkPluginURL_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
-        {
-            linkPluginURL.Links[linkPluginURL.Links.IndexOf(e.Link)].Visited = true;
-            System.Diagnostics.Process.Start(e.Link.LinkData.ToString());
-        }
-        #endregion Plugins
-
         #region Files
         public void ShowFiles(FSDirectory dir)
         {
@@ -1678,7 +1566,7 @@ namespace Lucene.Net.LukeNet
             if (editDocDlg.DialogResult == DialogResult.OK)
             {
                 InitOverview();
-                InitPlugins();
+                //TODO: needed? InitPlugins();
             }
         }
 
