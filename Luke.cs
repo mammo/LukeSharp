@@ -36,12 +36,8 @@ namespace Lucene.Net.LukeNet
         public static readonly Lucene.Net.Util.Version LUCENE_VERSION = Lucene.Net.Util.Version.LUCENE_29;
         private string lukeURL = "http://www.getopt.org/luke";
 
-        private Progress progressDlg;
         private string indexPath;
         private Preferences p;
-        private Document document;
-        private Term term;
-        private TermDocs termDocs;
         private bool _readOnly;
         private FSDirectory dir;
         private IndexReader indexReader;
@@ -107,45 +103,6 @@ namespace Lucene.Net.LukeNet
             { }
         }
 
-        private void textTerm_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
-        {
-            if (e.KeyChar == Convert.ToChar((int)Keys.Enter))
-            {
-                if (indexReader == null)
-                {
-                    ShowStatus(resources.GetString("NoIndex"));
-                    return;
-                }
-
-                try
-                {
-                    String text = textTerm.Text;
-                    String field = comboTerms.Text;
-
-                    if (text == null || text == string.Empty)
-                        return;
-
-                    Term t = new Term(field, text);
-                    _ShowTerm(t);
-                }
-                catch (Exception exc)
-                {
-                    ShowStatus(exc.Message);
-                }
-            }
-        }
-
-        private void textDocNum_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
-        {
-            if (e.KeyChar == Convert.ToChar((int)Keys.Enter))
-                _ShowDoc(0);
-        }
-
-        private void btnTermVector_Click(object sender, System.EventArgs e)
-        {
-            ShowTV();
-        }
-
         private void listTerms_DoubleClick(object sender, System.EventArgs e)
         {
             contextMenuItemBrowse_Click(sender, e);
@@ -156,33 +113,24 @@ namespace Lucene.Net.LukeNet
             listTerms.ListViewItemSorter = new ListViewItemComparer(e.Column);
             listTerms.Sort();
         }
-        private void listDocFields_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
-        {
-            listDocFields.ListViewItemSorter = new ListViewItemComparer(e.Column);
-            listDocFields.Sort();
-        }
 
         private void tabControl_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             if (tabControl.SelectedTab == tabOverview)
                 SetOverviewContextMenuItems();
-            else if (tabControl.SelectedTab == tabDocuments)
+            else if (tabControl.SelectedTab == documentsTabPage)
                 SetDocumentsContextMenuItems();
         }
         #endregion Luke Events
 
         #region Resizing
-        private void tabDocuments_Resize(object sender, System.EventArgs e)
-        {
-            ResizeLastListColumn(listDocFields);
-        }
 
         private void tabOverview_Resize(object sender, System.EventArgs e)
         {
             ResizeLastListColumn(listTerms);
         }
 
-        private void ResizeLastListColumn(ListView list)
+        internal void ResizeLastListColumn(ListView list)
         {
             int width = list.Width;
             for (int i = 0; i < list.Columns.Count - 1; i++)
@@ -195,17 +143,6 @@ namespace Lucene.Net.LukeNet
         #endregion Resizing
 
         #region Buttons
-        private void buttonPrevDoc_Click(object sender, System.EventArgs e)
-        {
-            ShowStatus("");
-            _ShowDoc(-1);
-        }
-
-        private void buttonNextDoc_Click(object sender, System.EventArgs e)
-        {
-            ShowStatus("");
-            _ShowDoc(+1);
-        }
 
         private void buttonTopTerms_Click(object sender, System.EventArgs e)
         {
@@ -213,328 +150,7 @@ namespace Lucene.Net.LukeNet
             ShowTopTerms();
         }
 
-        private void buttonFirstTerm_Click(object sender, System.EventArgs e)
-        {
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-            try
-            {
-                TermEnum te = indexReader.Terms();
-                te.Next();
-                Term t = te.Term();
-                _ShowTerm(t);
-            }
-            catch (Exception exc)
-            {
-                ShowStatus(exc.Message);
-            }
-        }
-
-        private void buttonNextTerm_Click(object sender, System.EventArgs e)
-        {
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-            try
-            {
-                String text = textTerm.Text;
-                String field = comboTerms.Text;
-
-                TermEnum te;
-
-                if (text == null || text == string.Empty)
-                    te = indexReader.Terms();
-                else
-                    te = indexReader.Terms(new Term(field, text));
-
-                te.Next();
-                Term t = te.Term();
-
-                _ShowTerm(t);
-            }
-            catch (Exception exc)
-            {
-                ShowStatus(exc.Message);
-            }
-        }
-
-        private void buttonDelete_Click(object sender, System.EventArgs e)
-        {
-            int docid = 0;
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-            if (_readOnly)
-            {
-                ShowStatus(resources.GetString("Readonly"));
-                return;
-            }
-            try
-            {
-                docid = Int32.Parse(textDocNum.Text);
-
-                _ShowDoc(+1);
-                indexReader.DeleteDocument(docid);
-                InitOverview();
-            }
-            catch (Exception exc)
-            {
-                ShowStatus(exc.Message);
-            }
-        }
-
-        private void buttonShowFirstDoc_Click(object sender, System.EventArgs e)
-        {
-            if (term == null) return;
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-            try
-            {
-                termDocs = indexReader.TermDocs(term);
-                termDocs.Next();
-                labelDocNum.Text = "1";
-
-                _ShowTermDoc(termDocs);
-            }
-            catch (Exception exc)
-            {
-                ShowStatus(exc.Message);
-            }
-        }
-
-        private void buttonShowNextDoc_Click(object sender, System.EventArgs e)
-        {
-            if (term == null) return;
-
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-            try
-            {
-                if (termDocs == null)
-                {
-                    buttonShowFirstDoc_Click(sender, e);
-                    return;
-                }
-
-                if (!termDocs.Next()) return;
-
-                int cnt = 1;
-                try
-                {
-                    cnt = Int32.Parse(labelDocNum.Text);
-                }
-                catch (Exception) { };
-
-                labelDocNum.Text = (cnt + 1).ToString();
-
-                _ShowTermDoc(termDocs);
-            }
-            catch (Exception exc)
-            {
-                ShowStatus(exc.Message);
-            }
-        }
-
-        private void buttonShowAllDocs_Click(object sender, System.EventArgs e)
-        {
-            if (term == null) return;
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-
-            tabControl.SelectedTab = searchTabPage;
-            searchTabPage.SetSearchText(term.Field() + ":" + term.Text());
-
-            Query q = new TermQuery(term);
-
-            IndexSearcher searcher = null;
-            try
-            {
-                searcher = new IndexSearcher(dir, true);
-                searchTabPage._Search(q, searcher);
-            }
-            catch (Exception exc)
-            {
-                ErrorMessage(exc.Message);
-            }
-            finally
-            {
-                if (searcher != null) try { searcher.Close(); }
-                    catch (Exception) { };
-            }
-        }
-
-        private void buttonDeleteAllDocs_Click(object sender, System.EventArgs e)
-        {
-            if (term == null) return;
-
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-
-            if (_readOnly)
-            {
-                ShowStatus(resources.GetString("Readonly"));
-                return;
-            }
-            try
-            {
-                buttonShowNextDoc_Click(sender, e);
-                indexReader.DeleteDocuments(term);
-            }
-            catch (Exception exc)
-            {
-                ShowStatus(exc.Message);
-            }
-            finally
-            {
-                listDocFields.BeginUpdate();
-                listDocFields.Items.Clear();
-                listDocFields.EndUpdate();
-            }
-            InitOverview();
-        }
-
-
         #endregion Buttons
-
-        #region Clipboard
-        private void buttonCopySelected_Click(object sender, System.EventArgs e)
-        {
-            if (listDocFields.SelectedItems == null ||
-                listDocFields.SelectedItems.Count == 0)
-                return;
-
-            if (document == null) return;
-
-            StringBuilder copyText = new StringBuilder();
-
-            bool store = false,
-                index = false,
-                token = false,
-                tvf = false;
-            float boost;
-
-            int i = 0;
-            foreach (ListViewItem item in listDocFields.SelectedItems)
-            {
-                boost = 0;
-                if (i++ > 0) copyText.Append(Environment.NewLine);
-
-                if (item.SubItems[1].Text == "+")
-                    index = true;
-                else
-                    index = false;
-                if (item.SubItems[2].Text == "+")
-                    token = true;
-                else
-                    token = false;
-                if (item.SubItems[3].Text == "+")
-                    store = true;
-                else
-                    store = false;
-                if (item.SubItems[4].Text == "+")
-                    tvf = true;
-                else
-                    tvf = false;
-                try
-                {
-                    boost = Single.Parse(item.SubItems[5].Text, NumberFormatInfo.InvariantInfo);
-                }
-                catch (Exception) { }
-
-                Field field = Legacy.CreateField(item.SubItems[0].Text.Trim().Substring(1, item.SubItems[0].Text.Trim().Length - 2),
-                    item.SubItems[item.SubItems.Count - 1].Text,
-                    store,
-                    index,
-                    token,
-                    tvf);
-                field.SetBoost(boost);
-
-                copyText.Append(field.ToString());
-
-            }
-
-            Clipboard.SetDataObject(copyText.ToString());
-        }
-
-        private void buttonCopyAll_Click(object sender, System.EventArgs e)
-        {
-            if (document == null) return;
-
-            StringBuilder copyText = new StringBuilder();
-            int i = 0;
-            bool store = false,
-                index = false,
-                token = false,
-                tvf = false;
-            float boost;
-
-            foreach (ListViewItem item in listDocFields.Items)
-            {
-                boost = 0;
-
-                if (item.SubItems[1].Text == "+")
-                    index = true;
-                else
-                    index = false;
-                if (item.SubItems[2].Text == "+")
-                    token = true;
-                else
-                    token = false;
-                if (item.SubItems[3].Text == "+")
-                    store = true;
-                else
-                    store = false;
-                if (item.SubItems[4].Text == "+")
-                    tvf = true;
-                else
-                    tvf = false;
-                try
-                {
-                    boost = Single.Parse(item.SubItems[5].Text, NumberFormatInfo.InvariantInfo);
-                }
-                catch (Exception) { }
-
-                if (!index && !token && !store && !tvf &&
-                    item.SubItems[item.SubItems.Count - 1].Text == resources.GetString("FieldNotAvailable"))
-                    continue;
-
-                if (i++ > 0) copyText.Append(Environment.NewLine);
-
-                Field field = Legacy.CreateField(item.SubItems[0].Text.Trim().Substring(1, item.SubItems[0].Text.Trim().Length - 2),
-                    item.SubItems[item.SubItems.Count - 1].Text,
-                    store,
-                    index,
-                    token,
-                    tvf);
-                field.SetBoost(boost);
-
-                copyText.Append(field.ToString());
-
-            }
-
-            Clipboard.SetDataObject(copyText.ToString());
-        }
-
-        #endregion Clipboard
 
         #region Menu Events
         private void menuItemExit_Click(object sender, System.EventArgs e)
@@ -633,13 +249,13 @@ namespace Lucene.Net.LukeNet
 
             Term t = new Term(field, text);
 
-            tabControl.SelectedTab = tabDocuments;
-            _ShowTerm(t);
+            tabControl.SelectedTab = documentsTabPage;
+            documentsTabPage._ShowTerm(t);
         }
 
         private void contextMenuItemShowTV_Click(object sender, System.EventArgs e)
         {
-            ShowTV();
+            documentsTabPage.ShowTV();
         }
 
         private void menuItemCompound_Click(object sender, System.EventArgs e)
@@ -728,7 +344,6 @@ namespace Lucene.Net.LukeNet
             set
             {
                 labelDocs.Text = value.ToString();
-                labelIndDocs.Text = (value - 1).ToString();
             }
         }
 
@@ -751,46 +366,6 @@ namespace Lucene.Net.LukeNet
         #endregion Properties
 
         #region Private Methods
-        private void ShowTV()
-        {
-            if (listDocFields.SelectedItems.Count == 0) return;
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-
-            int docId;
-            try
-            {
-                docId = Int32.Parse(textDocNum.Text);
-            }
-            catch (Exception)
-            {
-                ShowStatus(resources.GetString("DocNotSelected"));
-                return;
-            }
-
-            try
-            {
-
-                string fieldName = listDocFields.SelectedItems[0].SubItems[0].Text;
-                fieldName = fieldName.Substring(1, fieldName.Length - 2);
-                TermFreqVector tfv = indexReader.GetTermFreqVector(docId, fieldName);
-                if (tfv == null)
-                {
-                    ShowStatus(resources.GetString("NoTV"));
-                    return;
-                }
-
-                TermVector tvDialog = new TermVector(fieldName, tfv);
-                tvDialog.ShowDialog(this);
-            }
-            catch (Exception exc)
-            {
-                ShowStatus(exc.Message);
-            }
-        }
         internal void PopulateAnalyzers(ComboBox cbAnalyzers)
         {
             cbAnalyzers.BeginUpdate();
@@ -823,6 +398,8 @@ namespace Lucene.Net.LukeNet
             HasDeletions = indexReader.HasDeletions().ToString();
 
             LastModified = IndexReader.LastModified(dir);
+
+            documentsTabPage.Init(i, indexReader.NumDocs());
 
             ShowTopTerms();
         }
@@ -967,9 +544,8 @@ namespace Lucene.Net.LukeNet
 
             listFields.EndUpdate();
 
-            comboTerms.Items.Clear();
-            comboTerms.Items.AddRange(names.ToArray());
-            comboTerms.SelectedIndex = 0;
+            documentsTabPage.SetFieldNames(names);
+            documentsTabPage.SetFields(indexFields);
         }
 
         private void ShowTopTerms()
@@ -1030,306 +606,9 @@ namespace Lucene.Net.LukeNet
             }
         }
 
-        private Document CreateDocument(int iNum)
-        {
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return null;
-            }
-
-            if (iNum < 0 || iNum >= indexReader.NumDocs())
-            {
-                ShowStatus(resources.GetString("DocNumberRange"));
-                return null;
-            }
-
-            if (!indexReader.IsDeleted(iNum))
-                return indexReader.Document(iNum);
-            else
-            {
-                ShowStatus(resources.GetString("DocDeleted"));
-                return null;
-            }
-        }
-        private void _ShowDoc(int incr)
-        {
-            string num = textDocNum.Text;
-
-            if (num == string.Empty) num = (-incr).ToString();
-
-            try
-            {
-                int iNum = Int32.Parse(num);
-                iNum += incr;
-                Document doc = CreateDocument(iNum);
-
-                _ShowDocFields(iNum, doc);
-            }
-            catch (Exception e)
-            {
-                ShowStatus(e.Message);
-            }
-        }
-        internal void _ShowDocFields(int docid, Document doc)
-        {
-            textDocNum.Text = docid.ToString();
-            labelInfoDocNum.Text = docid.ToString();
-
-            listDocFields.BeginUpdate();
-            listDocFields.Items.Clear();
-
-            document = doc;
-
-            try
-            {
-                if (doc == null) return;
-                for (int i = 0; i < indexFields.Length; i++)
-                {
-                    Field[] fields = doc.GetFields(indexFields[i]);
-                    if (fields == null)
-                    {
-                        AddFieldRow(indexFields[i], null);
-                        continue;
-                    }
-                    for (int j = 0; j < fields.Length; j++)
-                    {
-                        AddFieldRow(indexFields[i], fields[j]);
-                    }
-                }
-            }
-            finally
-            {
-                listDocFields.EndUpdate();
-            }
-        }
-
-        private void AddFieldRow(string fieldName, Field f)
-        {
-            string feature;
-            ListViewItem item = new ListViewItem("<" + fieldName + ">");
-
-            if (f != null && f.IsIndexed()) feature = "+";
-            else feature = " ";
-            item.SubItems.Add(feature);
-
-            if (f != null && f.IsTokenized()) feature = "+";
-            else feature = " ";
-            item.SubItems.Add(feature);
-
-            if (f != null && f.IsStored()) feature = "+";
-            else feature = " ";
-            item.SubItems.Add(feature);
-
-            if (f != null && f.IsTermVectorStored()) feature = "+";
-            else feature = " ";
-            item.SubItems.Add(feature);
-
-            if (f != null)
-                item.SubItems.Add(f.GetBoost().ToString("0.0####"));
-            else item.SubItems.Add("");
-
-            if (f != null)
-                item.SubItems.Add(f.StringValue());
-            else
-            {
-                item.SubItems.Add(resources.GetString("FieldNotAvailable"));
-            }
-
-            listDocFields.Items.Add(item);
-        }
-
-        private void _ShowTerm(Term t)
-        {
-            if (t == null)
-            {
-                ShowStatus(resources.GetString("NoTerms"));
-                return;
-            }
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-
-            termDocs = null;
-            this.term = t;
-            comboTerms.SelectedItem = t.Field();
-            textTerm.Text = t.Text();
-
-            labelDocNum.Text = "?";
-            labelTermFreq.Text = "?";
-
-            try
-            {
-                int freq = indexReader.DocFreq(t);
-                labelDocFreq.Text = freq.ToString();
-                labelDocMax.Text = freq.ToString();
-            }
-            catch (Exception e)
-            {
-                ShowStatus(e.Message);
-                labelDocFreq.Text = "?";
-            }
-        }
-
-        private void _ShowTermDoc(TermDocs td)
-        {
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-            try
-            {
-                Document doc = indexReader.Document(td.Doc());
-
-                labelDocNum.Text = td.Doc().ToString();
-                labelTermFreq.Text = td.Freq().ToString();
-
-                _ShowDocFields(td.Doc(), doc);
-            }
-            catch (Exception e)
-            {
-                ShowStatus(e.Message);
-            }
-        }
 
         #endregion Private Methods
 
-        #region Document reconstruction
-        private void btnReconstruct_Click(object sender, System.EventArgs e)
-        {
-            progressDlg = new Progress();
-            progressDlg.Message = resources.GetString("CollectingTerms");
-
-            int docNum = 0;
-            try
-            {
-                docNum = Int32.Parse(textDocNum.Text);
-            }
-            catch (Exception)
-            {
-                ShowStatus(resources.GetString("DocNotSelected"));
-                return;
-            }
-
-            Document document = CreateDocument(docNum);
-            if (document == null)
-                return;
-
-            Hashtable doc = new Hashtable();
-
-            this.Cursor = Cursors.WaitCursor;
-
-            // async call to reconstruction
-            ReconstructDelegate reconstruct = new ReconstructDelegate(BeginAsyncReconstruction);
-            reconstruct.BeginInvoke(docNum, document, doc, new AsyncCallback(EndAsyncReconstruction), null);
-
-            progressDlg.ShowDialog(this);
-            this.Cursor = Cursors.Default;
-
-            EditDocument editDocDlg = new EditDocument(this, docNum, document, doc);
-            editDocDlg.ShowDialog();
-            if (editDocDlg.DialogResult == DialogResult.OK)
-            {
-                InitOverview();
-            }
-        }
-
-        void EndAsyncReconstruction(IAsyncResult target)
-        {
-            if (!progressDlg.InvokeRequired)
-                progressDlg.Close();
-            else
-            {
-                // Show status asynchronously
-                AsyncCallback endReconstruct = new AsyncCallback(EndAsyncReconstruction);
-                BeginInvoke(endReconstruct, new object[] { target });
-            }
-        }
-        delegate void ReconstructDelegate(int docNum, Document document, Hashtable doc);
-        void BeginAsyncReconstruction(int docNum, Document document, Hashtable doc)
-        {
-            // get stored fields
-            ArrayList sf = new ArrayList();
-            for (int i = 0; i < indexFields.Length; i++)
-            {
-                Field[] f = document.GetFields(indexFields[i]);
-                if (f == null || f.Length == 0 || !f[0].IsStored()) continue;
-                StringBuilder sb = new StringBuilder();
-                for (int k = 0; k < f.Length; k++)
-                {
-                    if (k > 0) sb.Append('\n');
-                    sb.Append(f[k].StringValue());
-                }
-                Field field = Legacy.CreateField(indexFields[i], sb.ToString(), f[0].IsStored(), f[0].IsIndexed(), f[0].IsTokenized(), f[0].IsTermVectorStored());
-                field.SetBoost(f[0].GetBoost());
-                doc[indexFields[i]] = field;
-                sf.Add(indexFields[i]);
-            }
-            String term = null;
-            GrowableStringArray terms = null;
-            try
-            {
-                int i = 0;
-                int delta = (int)Math.Ceiling(((double)numTerms / 100));
-
-                TermEnum te = indexReader.Terms();
-                TermPositions tp = indexReader.TermPositions();
-                while (te.Next())
-                {
-                    if ((i++ % delta) == 0)
-                    {
-                        // update UI - async
-                        UpdateProgress(i / delta);
-                    }
-
-                    // skip stored fields
-                    if (sf.Contains(te.Term().Field())) continue;
-                    tp.Seek(te.Term());
-                    if (!tp.SkipTo(docNum) || tp.Doc() != docNum)
-                    {
-                        // this term is not found in the doc
-                        continue;
-                    }
-                    term = te.Term().Text();
-                    terms = (GrowableStringArray)doc[te.Term().Field()];
-                    if (terms == null)
-                    {
-                        terms = new GrowableStringArray();
-                        doc[te.Term().Field()] = terms;
-                    }
-                    for (int k = 0; k < tp.Freq(); k++)
-                    {
-                        int pos = tp.NextPosition();
-                        terms.Set(pos, term);
-                    }
-                }
-            }
-            catch (Exception exc)
-            {
-                // Update UI - async
-                ShowStatus(exc.Message);
-            }
-        }
-
-        delegate void UpdateProgressDelegate(int val);
-        /// <summary>
-        /// Updates status. Possibly async
-        /// </summary>
-        private void UpdateProgress(int val)
-        {
-            if (!progressDlg.InvokeRequired)
-                progressDlg.Value = val;
-            else
-            {
-                // Show status asynchronously
-                UpdateProgressDelegate showProgress = new UpdateProgressDelegate(UpdateProgress);
-                BeginInvoke(showProgress, new object[] { val });
-            }
-        }
-        #endregion Document reconstruction
 
         #region Cleanup
         /// <summary>
@@ -1371,7 +650,17 @@ namespace Lucene.Net.LukeNet
 
         internal void ShowDocumentsTab()
         {
-            tabControl.SelectedTab = tabDocuments;
+            tabControl.SelectedTab = documentsTabPage;
+        }
+
+        internal void ShowSearchTab()
+        {
+            tabControl.SelectedTab = searchTabPage;
+        }
+
+        internal void _ShowDocFields(int docId, Document doc)
+        {
+            documentsTabPage._ShowDocFields(docId, doc);
         }
     }
 }

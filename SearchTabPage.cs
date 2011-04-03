@@ -26,7 +26,7 @@ namespace Lucene.Net.LukeNet
         private int[] searchedDocIds;
         private string[] _indexFields;
 
-        public SearchTabPage(Luke luke)
+        public SearchTabPage(Luke luke) 
         {
             _luke = luke;
             InitializeComponent();
