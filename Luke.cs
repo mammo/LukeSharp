@@ -37,24 +37,19 @@ namespace Lucene.Net.LukeNet
         private string lukeURL = "http://www.getopt.org/luke";
 
         private Progress progressDlg;
-        private Query query;
-        private int[] searchedDocIds;
         private string indexPath;
         private Preferences p;
         private Document document;
         private Term term;
         private TermDocs termDocs;
-        private bool readOnly;
+        private bool _readOnly;
         private FSDirectory dir;
         private IndexReader indexReader;
-        private Analyzer stdAnalyzer = new StandardAnalyzer(Luke.LUCENE_VERSION);
-        private Analyzer analyzer;
-        private QueryParser queryParser;
         private String[] indexFields;
         private bool useCompound;
         private int numTerms;
 
-        private ResourceManager resources = new ResourceManager
+        internal ResourceManager resources = new ResourceManager
             (
                 typeof(Luke).Namespace + ".Messages",
                 Assembly.GetAssembly(typeof(Luke))
@@ -146,35 +141,9 @@ namespace Lucene.Net.LukeNet
                 _ShowDoc(0);
         }
 
-        private void listSearch_DoubleClick(object sender, System.EventArgs e)
+        private void btnTermVector_Click(object sender, System.EventArgs e)
         {
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-
-            if (listSearch.SelectedItems == null ||
-                listSearch.SelectedItems.Count == 0)
-                return;
-
-            Document doc;
-            int docId;
-            try
-            {
-                docId = Int32.Parse(listSearch.SelectedItems[0].SubItems[1].Text);
-
-                doc = indexReader.Document(docId);
-            }
-            catch (Exception exc)
-            {
-                ShowStatus(exc.Message);
-                return;
-            }
-
-            _ShowDocFields(docId, doc);
-
-            tabControl.SelectedTab = tabDocuments;
+            ShowTV();
         }
 
         private void listTerms_DoubleClick(object sender, System.EventArgs e)
@@ -186,11 +155,6 @@ namespace Lucene.Net.LukeNet
         {
             listTerms.ListViewItemSorter = new ListViewItemComparer(e.Column);
             listTerms.Sort();
-        }
-        private void listSearch_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
-        {
-            listSearch.ListViewItemSorter = new ListViewItemComparer(e.Column);
-            listSearch.Sort();
         }
         private void listDocFields_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
         {
@@ -307,7 +271,7 @@ namespace Lucene.Net.LukeNet
                 ShowStatus(resources.GetString("NoIndex"));
                 return;
             }
-            if (readOnly)
+            if (_readOnly)
             {
                 ShowStatus(resources.GetString("Readonly"));
                 return;
@@ -393,23 +357,16 @@ namespace Lucene.Net.LukeNet
                 return;
             }
 
-            tabControl.SelectedTab = tabSearch;
-
-            textSearch.Text = term.Field() + ":" + term.Text();
+            tabControl.SelectedTab = searchTabPage;
+            searchTabPage.SetSearchText(term.Field() + ":" + term.Text());
 
             Query q = new TermQuery(term);
-            textParsed.Text = q.ToString();
 
             IndexSearcher searcher = null;
             try
             {
                 searcher = new IndexSearcher(dir, true);
-
-                listSearch.BeginUpdate();
-                listSearch.Items.Clear();
-                listSearch.EndUpdate();
-
-                _Search(q, searcher);
+                searchTabPage._Search(q, searcher);
             }
             catch (Exception exc)
             {
@@ -432,7 +389,7 @@ namespace Lucene.Net.LukeNet
                 return;
             }
 
-            if (readOnly)
+            if (_readOnly)
             {
                 ShowStatus(resources.GetString("Readonly"));
                 return;
@@ -455,99 +412,6 @@ namespace Lucene.Net.LukeNet
             InitOverview();
         }
 
-        private void buttonSearch_Click(object sender, System.EventArgs e)
-        {
-            Search();
-        }
-
-        private void buttonSearchDelete_Click(object sender, System.EventArgs e)
-        {
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-            if (readOnly)
-            {
-                ShowStatus(resources.GetString("Readonly"));
-                return;
-            }
-
-            try
-            {
-                foreach (ListViewItem item in listSearch.SelectedItems)
-                {
-                    int docId = Int32.Parse(item.SubItems[1].Text);
-                    indexReader.DeleteDocument(docId);
-                    listSearch.Items.Remove(item);
-                }
-            }
-            catch (Exception exc)
-            {
-                ShowStatus(exc.Message);
-            }
-            InitOverview();
-        }
-
-        private void btnExplain_Click(object sender, System.EventArgs e)
-        {
-            if (listSearch.SelectedItems.Count == 0) return;
-            if (searchedDocIds == null || searchedDocIds.Length < listSearch.Items.Count) return;
-
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-
-            if (query == null) return;
-
-            IndexSearcher searcher = null;
-            try
-            {
-                searcher = new IndexSearcher(dir, true);
-                Lucene.Net.Search.Explanation expl = searcher.Explain(query, searchedDocIds[listSearch.SelectedIndices[0]]);
-                ExplanationDialog explDialog = new ExplanationDialog(expl);
-                explDialog.ShowDialog(this);
-            }
-            catch (Exception exc)
-            {
-                ErrorMessage(exc.Message);
-            }
-            finally
-            {
-                searcher.Close();
-            }
-        }
-        private void btnUpdateParsedQuery_Click(object sender, System.EventArgs e)
-        {
-            string analyzerName = Analyzing.GetAnalyzerName((string)comboAnalyzer.SelectedItem);
-            comboAnalyzer.SelectedItem = analyzerName;
-            QueryParser qp = CreateQueryParser(analyzerName);
-            String queryS = textSearch.Text;
-
-            if (queryS.Trim() == "")
-            {
-                textParsed.Enabled = false;
-                textParsed.Text = resources.GetString("EmptyQuery");
-                return;
-            }
-            textParsed.Enabled = true;
-
-            try
-            {
-                Query q = qp.Parse(queryS);
-                textParsed.Text = q.ToString();
-            }
-            catch (Exception exc)
-            {
-                textParsed.Text = exc.Message;
-            }
-        }
-        private void btnTermVector_Click(object sender, System.EventArgs e)
-        {
-            ShowTV();
-        }
 
         #endregion Buttons
 
@@ -685,7 +549,7 @@ namespace Lucene.Net.LukeNet
                 ShowStatus(resources.GetString("NoIndex"));
                 return;
             }
-            if (readOnly)
+            if (_readOnly)
             {
                 ShowStatus(resources.GetString("Readonly"));
                 return;
@@ -748,10 +612,10 @@ namespace Lucene.Net.LukeNet
 
             Term t = new Term(field, text);
 
-            tabControl.SelectedTab = tabSearch;
+            tabControl.SelectedTab = searchTabPage;
 
-            textSearch.Text = t.Field() + ":" + t.Text();
-            Search();
+            searchTabPage.SetSearchText(t.Field() + ":" + t.Text());
+            searchTabPage.Search();
         }
 
         private void contextMenuItemBrowse_Click(object sender, System.EventArgs e)
@@ -792,7 +656,7 @@ namespace Lucene.Net.LukeNet
                 ShowStatus(resources.GetString("NoIndex"));
                 return;
             }
-            if (readOnly)
+            if (_readOnly)
             {
                 ShowStatus(resources.GetString("Readonly"));
                 return;
@@ -811,12 +675,29 @@ namespace Lucene.Net.LukeNet
         #endregion Menu Events
 
         #region Properties
+        public bool ReadOnly
+        {
+            get { return _readOnly; }
+        }
+
+        public Lucene.Net.Store.Directory Directory
+        {
+            get
+            {
+                return dir;
+            }
+        }
+
         public IndexReader IndexReader
         {
             get
-            { return indexReader; }
+            {
+                return indexReader;
+            }
             set
-            { indexReader = value; }
+            {
+                indexReader = value;
+            }
         }
 
         private string IndexName
@@ -921,13 +802,16 @@ namespace Lucene.Net.LukeNet
         internal void InitOverview()
         {
             // populate analyzers
-            PopulateAnalyzers(comboAnalyzer);
 
-            IndexName = indexPath + (readOnly ? " (R)" : "");
+            searchTabPage.Init();
+
+            IndexName = indexPath + (_readOnly ? " (R)" : "");
 
             DocumentsNumber = indexReader.NumDocs();
 
-            SetFieldNames(indexReader.GetFieldNames(IndexReader.FieldOption.ALL));
+            List<string> fieldNames = new List<string>(indexReader.GetFieldNames(IndexReader.FieldOption.ALL));
+            SetFieldNames(fieldNames);
+            searchTabPage.SetFieldnames(fieldNames);
 
             TermEnum termsEnum = indexReader.Terms();
             int i = 0;
@@ -967,7 +851,7 @@ namespace Lucene.Net.LukeNet
         private void LukeInit(OpenIndex openIndexDlg)
         {
             indexPath = openIndexDlg.Path;
-            readOnly = openIndexDlg.ReadOnlyIndex;
+            _readOnly = openIndexDlg.ReadOnlyIndex;
             bool force = openIndexDlg.UnlockIndex;
 
             if (indexPath == String.Empty ||
@@ -999,7 +883,7 @@ namespace Lucene.Net.LukeNet
                 dir = FSDirectory.GetDirectory(indexPath, false);
                 if (IndexWriter.IsLocked(dir))
                 {
-                    if (readOnly)
+                    if (_readOnly)
                     {
                         ShowStatus(resources.GetString("IndexLockedRo"));
                         dir.Close();
@@ -1026,26 +910,11 @@ namespace Lucene.Net.LukeNet
 
                 // plugins tab
                 pluginsTabPage.LoadPlugins();
-                pluginsTabPage.Directory = dir;
-                pluginsTabPage.IndexReader = indexReader;
 
                 // overview tab
                 InitOverview();
 
-                // search tab
-                // Remove columns
-                listSearch.BeginUpdate();
-
-                while (listSearch.Columns.Count > 2)
-                {
-                    listSearch.Columns.RemoveAt(2);
-                }
-
-                foreach (string field in indexFields)
-                {
-                    listSearch.Columns.Add(field, 200, HorizontalAlignment.Left);
-                }
-                listSearch.EndUpdate();
+                searchTabPage.UpdateListSearch(indexFields);
 
                 ShowStatus(resources.GetString("IndexOpened"));
             }
@@ -1080,7 +949,7 @@ namespace Lucene.Net.LukeNet
             }
         }
 
-        private void SetFieldNames(ICollection<string> names)
+        private void SetFieldNames(List<string> names)
         {
             indexFields = new String[names.Count];
             labelFields.Text = names.Count.ToString();
@@ -1089,126 +958,18 @@ namespace Lucene.Net.LukeNet
 
             listFields.BeginUpdate();
             listFields.Items.Clear();
-            comboFields.Items.Clear();
-            comboTerms.Items.Clear();
 
             foreach (string name in names)
             {
-                // skip empty field
                 listFields.Items.Add(new ListViewItem("<" + name + ">"));
-                comboFields.Items.Add(name);
-                comboTerms.Items.Add(name);
                 indexFields[i++] = name;
             }
 
             listFields.EndUpdate();
-            comboFields.SelectedIndex = 0;
+
+            comboTerms.Items.Clear();
+            comboTerms.Items.AddRange(names.ToArray());
             comboTerms.SelectedIndex = 0;
-        }
-
-        private void Search()
-        {
-            if (indexReader == null)
-            {
-                ShowStatus(resources.GetString("NoIndex"));
-                return;
-            }
-
-            Cursor.Current = Cursors.WaitCursor;
-
-            string analyzerName = Analyzing.GetAnalyzerName((string)comboAnalyzer.SelectedItem);
-            comboAnalyzer.SelectedItem = analyzerName;
-            queryParser = CreateQueryParser(analyzerName);
-
-            string queryString = textSearch.Text;
-            if (queryString == string.Empty)
-            {
-                ShowStatus(resources.GetString("EmptyQuery"));
-                return;
-            }
-
-            IndexSearcher searcher = null;
-
-            listSearch.BeginUpdate();
-            listSearch.Items.Clear();
-
-            listSearch.EndUpdate();
-            try
-            {
-                Query q = queryParser.Parse(queryString);
-
-                if (searcher != null) searcher.Close();
-                searcher = new IndexSearcher(dir, true);
-
-                textParsed.Text = q.ToString();
-                _Search(q, searcher);
-            }
-            catch (Exception e)
-            {
-                ErrorMessage(e.Message);
-            }
-            finally
-            {
-                if (searcher != null) try { searcher.Close(); }
-                    catch (Exception) { };
-            }
-
-            Cursor.Current = Cursors.Default;
-        }
-
-        private void _Search(Query q, IndexSearcher searcher)
-        {
-            DateTime start = DateTime.Now;
-            Hits hits = searcher.Search(q);
-            ShowStatus(((TimeSpan)(DateTime.Now - start)).TotalMilliseconds.ToString() + " ms");
-
-            listSearch.BeginUpdate();
-
-            try
-            {
-                if (hits == null || hits.Length() == 0)
-                {
-                    if (listSearch.Columns.Count < 3)
-                    {
-                        int width = listSearch.Width -
-                            listSearch.Columns[0].Width -
-                            listSearch.Columns[1].Width;
-                        listSearch.Columns.Add("", width, HorizontalAlignment.Left);
-                    }
-
-                    ListViewItem noResults = new ListViewItem();
-                    noResults.SubItems.AddRange(new String[] { "", resources.GetString("NoResults") });
-                    listSearch.Items.Add(noResults);
-
-                    labelSearchRes.Text = "0";
-                    return;
-                }
-
-                labelSearchRes.Text = hits.Length().ToString();
-
-                searchedDocIds = new int[hits.Length()];
-
-                for (int i = 0; i < hits.Length(); i++)
-                {
-                    ListViewItem item = new ListViewItem((Math.Round((double)1000 * hits.Score(i), 1) / 10).ToString());
-                    item.SubItems.Add(hits.Id(i).ToString());
-
-                    Document doc = hits.Doc(i);
-                    searchedDocIds[i] = hits.Id(i);
-
-                    for (int j = 0; j < indexFields.Length; j++)
-                    {
-                        item.SubItems.Add(doc.Get(indexFields[j]));
-                    }
-
-                    listSearch.Items.Add(item);
-                }
-                query = q;
-            }
-            finally
-            {
-                listSearch.EndUpdate();
-            }
         }
 
         private void ShowTopTerms()
@@ -1310,7 +1071,7 @@ namespace Lucene.Net.LukeNet
                 ShowStatus(e.Message);
             }
         }
-        private void _ShowDocFields(int docid, Document doc)
+        internal void _ShowDocFields(int docid, Document doc)
         {
             textDocNum.Text = docid.ToString();
             labelInfoDocNum.Text = docid.ToString();
@@ -1434,24 +1195,6 @@ namespace Lucene.Net.LukeNet
             }
         }
 
-        private QueryParser CreateQueryParser(string analyzerName)
-        {
-            analyzer = Analyzing.GetAnalyzerForName(analyzerName);
-            if (null == analyzer)
-            {
-                ErrorMessage(string.Format(resources.GetString("AnalyzerNotFound"), analyzerName));
-                analyzer = stdAnalyzer;
-            }
-
-            string defField = (string)comboFields.SelectedItem;
-            if (defField == null || defField == string.Empty)
-            {
-                defField = indexFields[0];
-                comboFields.SelectedItem = analyzerName;
-            }
-
-            return new QueryParser(Luke.LUCENE_VERSION, defField, analyzer);
-        }
         #endregion Private Methods
 
         #region Document reconstruction
@@ -1625,6 +1368,11 @@ namespace Lucene.Net.LukeNet
         }
         #endregion Cleanup
 
+
+        internal void ShowDocumentsTab()
+        {
+            tabControl.SelectedTab = tabDocuments;
+        }
     }
 }
 

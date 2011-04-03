@@ -20,6 +20,7 @@ namespace Lucene.Net.LukeNet
         private System.Windows.Forms.ColumnHeader columnHeaderTopTermRank;
         private System.Windows.Forms.ColumnHeader columnHeaderTopTermField;
         private System.Windows.Forms.ColumnHeader columnHeaderTopTermText;
+        private System.Windows.Forms.ColumnHeader columnHeaderFieldName;
         private System.Windows.Forms.Label labelTopTerms;
         private System.Windows.Forms.Label labelNumOfTerms;
         private System.Windows.Forms.Label labelSelectHint;
@@ -38,24 +39,15 @@ namespace Lucene.Net.LukeNet
         private System.Windows.Forms.Label labelBrowseHint;
         private System.Windows.Forms.Label labelZeroDoc;
         private System.Windows.Forms.Label labelBrowseDoc;
-        private System.Windows.Forms.Label labelSearchResult;
-        private System.Windows.Forms.Label labelSearchDocs;
-        private System.Windows.Forms.ColumnHeader columnHeaderFieldName;
-        private System.Windows.Forms.Button buttonSearch;
-        private System.Windows.Forms.MenuItem menuItemExit;
-        private System.Windows.Forms.MenuItem menuItemOptimize;
-        private System.Windows.Forms.Button buttonTopTerms;
         private System.Windows.Forms.Label labelDocNum;
         private System.Windows.Forms.Label labelDocMax;
-        private System.Windows.Forms.Label labelTermFreq;
-        private System.Windows.Forms.Label labelSearchRes;
         private System.Windows.Forms.MainMenu mainMenu;
         private System.Windows.Forms.StatusBar statusBar;
         private System.ComponentModel.IContainer components;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabOverview;
         private System.Windows.Forms.TabPage tabDocuments;
-        private System.Windows.Forms.TabPage tabSearch;
+        private SearchTabPage searchTabPage;
         private System.Windows.Forms.Label labelName;
         private System.Windows.Forms.Label labelMod;
         private System.Windows.Forms.Label labelTerms;
@@ -84,7 +76,9 @@ namespace Lucene.Net.LukeNet
         private System.Windows.Forms.Button buttonShowFirstDoc;
         private System.Windows.Forms.Button buttonShowNextDoc;
         private System.Windows.Forms.Button buttonShowAllDocs;
-        private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.Button buttonTopTerms;
+        private System.Windows.Forms.Button btnTermVector;
+        internal System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ColumnHeader columnHeaderField;
         private System.Windows.Forms.ColumnHeader columnHeaderIndexed;
         private System.Windows.Forms.ColumnHeader columnHeaderToken;
@@ -93,14 +87,10 @@ namespace Lucene.Net.LukeNet
         private System.Windows.Forms.Button buttonCopySelected;
         private System.Windows.Forms.Button buttonCopyAll;
         private System.Windows.Forms.Button buttonDeleteAllDocs;
-        private System.Windows.Forms.ImageList imageList;
+        internal System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.ListView listDocFields;
         private System.Windows.Forms.Label labelCopy;
         private System.Windows.Forms.Label separatorOverview;
-        private System.Windows.Forms.ColumnHeader columnHeaderRank;
-        private System.Windows.Forms.ColumnHeader columnHeaderDocId;
-        private System.Windows.Forms.ListView listSearch;
-        private System.Windows.Forms.Button buttonSearchDelete;
         private System.Windows.Forms.MenuItem menuItemOpenIndex;
         private System.Windows.Forms.MenuItem menuItemUndelete;
         private System.Windows.Forms.MenuItem menuItemCompound;
@@ -108,25 +98,17 @@ namespace Lucene.Net.LukeNet
         private System.Windows.Forms.Label labelDeletionsTitle;
         private System.Windows.Forms.Label labelDeletions;
         private System.Windows.Forms.Label labelVersionTitle;
+        private System.Windows.Forms.Label labelTermFreq;
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.Button btnReconstruct;
         private System.Windows.Forms.Label labelInfoDocNumTitle;
         private System.Windows.Forms.Label labelInfoDocNum;
         private System.Windows.Forms.ColumnHeader columnHeaderTV;
-        private System.Windows.Forms.Button btnTermVector;
-        private System.Windows.Forms.Button btnExplain;
-        private System.Windows.Forms.GroupBox groupSearchOptions;
-        private System.Windows.Forms.Button btnUpdateParsedQuery;
-        private System.Windows.Forms.Label labelParsedQuery;
-        private System.Windows.Forms.ComboBox comboFields;
-        private System.Windows.Forms.Label labelDefaultField;
-        private System.Windows.Forms.ComboBox comboAnalyzer;
-        private System.Windows.Forms.Label labelAnalyzer;
-        private System.Windows.Forms.TextBox textSearch;
-        private System.Windows.Forms.Label labelSearchExpr;
         private LukeNet.FilesTabPage tabFiles;
         private System.Windows.Forms.ColumnHeader columnHeaderBoost;
-        private System.Windows.Forms.TextBox textParsed;
+
+        private System.Windows.Forms.MenuItem menuItemExit;
+        private System.Windows.Forms.MenuItem menuItemOptimize;
 
         private LukeNet.PluginsTabPage pluginsTabPage;
         #endregion Private UI Controls
@@ -159,6 +141,13 @@ namespace Lucene.Net.LukeNet
             this.contextMenu = new System.Windows.Forms.ContextMenu();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.btnTermVector = new System.Windows.Forms.Button();
+            this.buttonCopyAll = new System.Windows.Forms.Button();
+            this.buttonCopySelected = new System.Windows.Forms.Button();
+            this.buttonDeleteAllDocs = new System.Windows.Forms.Button();
+            this.buttonShowAllDocs = new System.Windows.Forms.Button();
+            this.btnReconstruct = new System.Windows.Forms.Button();
+            this.buttonDelete = new System.Windows.Forms.Button();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabOverview = new System.Windows.Forms.TabPage();
             this.labelVersion = new System.Windows.Forms.Label();
@@ -191,12 +180,9 @@ namespace Lucene.Net.LukeNet
             this.labelNumFields = new System.Windows.Forms.Label();
             this.labelIndexName = new System.Windows.Forms.Label();
             this.tabDocuments = new System.Windows.Forms.TabPage();
-            this.btnTermVector = new System.Windows.Forms.Button();
             this.labelInfoDocNum = new System.Windows.Forms.Label();
             this.labelInfoDocNumTitle = new System.Windows.Forms.Label();
             this.labelCopy = new System.Windows.Forms.Label();
-            this.buttonCopyAll = new System.Windows.Forms.Button();
-            this.buttonCopySelected = new System.Windows.Forms.Button();
             this.labelLegend = new System.Windows.Forms.Label();
             this.listDocFields = new System.Windows.Forms.ListView();
             this.columnHeaderField = new System.Windows.Forms.ColumnHeader();
@@ -213,8 +199,6 @@ namespace Lucene.Net.LukeNet
             this.labelOf = new System.Windows.Forms.Label();
             this.labelDocNum = new System.Windows.Forms.Label();
             this.labelDoc = new System.Windows.Forms.Label();
-            this.buttonDeleteAllDocs = new System.Windows.Forms.Button();
-            this.buttonShowAllDocs = new System.Windows.Forms.Button();
             this.buttonShowNextDoc = new System.Windows.Forms.Button();
             this.buttonShowFirstDoc = new System.Windows.Forms.Button();
             this.labelDocFreq = new System.Windows.Forms.Label();
@@ -226,36 +210,15 @@ namespace Lucene.Net.LukeNet
             this.buttonFirstTerm = new System.Windows.Forms.Button();
             this.labelBrowseHint = new System.Windows.Forms.Label();
             this.groupDocNumber = new System.Windows.Forms.GroupBox();
-            this.btnReconstruct = new System.Windows.Forms.Button();
-            this.buttonDelete = new System.Windows.Forms.Button();
             this.labelIndDocs = new System.Windows.Forms.Label();
             this.buttonNextDoc = new System.Windows.Forms.Button();
             this.textDocNum = new System.Windows.Forms.TextBox();
             this.buttonPrevDoc = new System.Windows.Forms.Button();
             this.labelZeroDoc = new System.Windows.Forms.Label();
             this.labelBrowseDoc = new System.Windows.Forms.Label();
-            this.tabSearch = new System.Windows.Forms.TabPage();
-            this.groupSearchOptions = new System.Windows.Forms.GroupBox();
-            this.btnUpdateParsedQuery = new System.Windows.Forms.Button();
-            this.textParsed = new System.Windows.Forms.TextBox();
-            this.labelParsedQuery = new System.Windows.Forms.Label();
-            this.comboFields = new System.Windows.Forms.ComboBox();
-            this.labelDefaultField = new System.Windows.Forms.Label();
-            this.comboAnalyzer = new System.Windows.Forms.ComboBox();
-            this.labelAnalyzer = new System.Windows.Forms.Label();
-            this.textSearch = new System.Windows.Forms.TextBox();
-            this.labelSearchExpr = new System.Windows.Forms.Label();
-            this.btnExplain = new System.Windows.Forms.Button();
-            this.labelSearchResult = new System.Windows.Forms.Label();
-            this.labelSearchDocs = new System.Windows.Forms.Label();
-            this.labelSearchRes = new System.Windows.Forms.Label();
-            this.listSearch = new System.Windows.Forms.ListView();
-            this.columnHeaderRank = new System.Windows.Forms.ColumnHeader();
-            this.columnHeaderDocId = new System.Windows.Forms.ColumnHeader();
-            this.buttonSearchDelete = new System.Windows.Forms.Button();
-            this.buttonSearch = new System.Windows.Forms.Button();
-            this.tabFiles = new LukeNet.FilesTabPage();
-            this.pluginsTabPage = new LukeNet.PluginsTabPage();
+            this.searchTabPage = new SearchTabPage(this);
+            this.tabFiles = new Lucene.Net.LukeNet.FilesTabPage(this.components);
+            this.pluginsTabPage = new Lucene.Net.LukeNet.PluginsTabPage(this);
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanelLogo)).BeginInit();
@@ -264,10 +227,7 @@ namespace Lucene.Net.LukeNet
             this.tabDocuments.SuspendLayout();
             this.groupTerm.SuspendLayout();
             this.groupDocNumber.SuspendLayout();
-            this.tabSearch.SuspendLayout();
-            this.groupSearchOptions.SuspendLayout();
-            this.tabFiles.SuspendLayout();
-            this.pluginsTabPage.SuspendLayout();
+            this.searchTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainMenu
@@ -399,6 +359,87 @@ namespace Lucene.Net.LukeNet
             this.imageList.Images.SetKeyName(4, "");
             this.imageList.Images.SetKeyName(5, "");
             // 
+            // btnTermVector
+            // 
+            this.btnTermVector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnTermVector.Location = new System.Drawing.Point(8, 466);
+            this.btnTermVector.Name = "btnTermVector";
+            this.btnTermVector.Size = new System.Drawing.Size(128, 23);
+            this.btnTermVector.TabIndex = 3;
+            this.btnTermVector.Text = "Field\'s Term &Vector";
+            this.toolTip.SetToolTip(this.btnTermVector, "Show Term Vector of selected field");
+            this.btnTermVector.Click += new System.EventHandler(this.btnTermVector_Click);
+            // 
+            // buttonCopyAll
+            // 
+            this.buttonCopyAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCopyAll.Location = new System.Drawing.Point(623, 466);
+            this.buttonCopyAll.Name = "buttonCopyAll";
+            this.buttonCopyAll.Size = new System.Drawing.Size(120, 23);
+            this.buttonCopyAll.TabIndex = 5;
+            this.buttonCopyAll.Text = "C&omplete Document";
+            this.toolTip.SetToolTip(this.buttonCopyAll, "Copy all fields to Clipboard");
+            this.buttonCopyAll.Click += new System.EventHandler(this.buttonCopyAll_Click);
+            // 
+            // buttonCopySelected
+            // 
+            this.buttonCopySelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCopySelected.Location = new System.Drawing.Point(499, 466);
+            this.buttonCopySelected.Name = "buttonCopySelected";
+            this.buttonCopySelected.Size = new System.Drawing.Size(120, 23);
+            this.buttonCopySelected.TabIndex = 4;
+            this.buttonCopySelected.Text = "Se&lected Fields";
+            this.toolTip.SetToolTip(this.buttonCopySelected, "Copy selected fields to Clipboard");
+            this.buttonCopySelected.Click += new System.EventHandler(this.buttonCopySelected_Click);
+            // 
+            // buttonDeleteAllDocs
+            // 
+            this.buttonDeleteAllDocs.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonDeleteAllDocs.ImageIndex = 3;
+            this.buttonDeleteAllDocs.ImageList = this.imageList;
+            this.buttonDeleteAllDocs.Location = new System.Drawing.Point(123, 106);
+            this.buttonDeleteAllDocs.Name = "buttonDeleteAllDocs";
+            this.buttonDeleteAllDocs.Size = new System.Drawing.Size(112, 23);
+            this.buttonDeleteAllDocs.TabIndex = 11;
+            this.buttonDeleteAllDocs.Text = "Delete &All Docs";
+            this.buttonDeleteAllDocs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip.SetToolTip(this.buttonDeleteAllDocs, "Delete all docs with this term (NO WARNING!)");
+            this.buttonDeleteAllDocs.Click += new System.EventHandler(this.buttonDeleteAllDocs_Click);
+            // 
+            // buttonShowAllDocs
+            // 
+            this.buttonShowAllDocs.Location = new System.Drawing.Point(8, 106);
+            this.buttonShowAllDocs.Name = "buttonShowAllDocs";
+            this.buttonShowAllDocs.Size = new System.Drawing.Size(112, 23);
+            this.buttonShowAllDocs.TabIndex = 10;
+            this.buttonShowAllDocs.Text = "&Show All Docs";
+            this.toolTip.SetToolTip(this.buttonShowAllDocs, "Show all docs with this term");
+            this.buttonShowAllDocs.Click += new System.EventHandler(this.buttonShowAllDocs_Click);
+            // 
+            // btnReconstruct
+            // 
+            this.btnReconstruct.Location = new System.Drawing.Point(8, 104);
+            this.btnReconstruct.Name = "btnReconstruct";
+            this.btnReconstruct.Size = new System.Drawing.Size(112, 23);
+            this.btnReconstruct.TabIndex = 6;
+            this.btnReconstruct.Text = "&Reconstruct && Edit";
+            this.toolTip.SetToolTip(this.btnReconstruct, "Reconstruct all field contents &amp; edit doc");
+            this.btnReconstruct.Click += new System.EventHandler(this.btnReconstruct_Click);
+            // 
+            // buttonDelete
+            // 
+            this.buttonDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonDelete.ImageIndex = 3;
+            this.buttonDelete.ImageList = this.imageList;
+            this.buttonDelete.Location = new System.Drawing.Point(128, 104);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(72, 23);
+            this.buttonDelete.TabIndex = 7;
+            this.buttonDelete.Text = "&Delete";
+            this.buttonDelete.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip.SetToolTip(this.buttonDelete, "Delete this document (NO WARNING)");
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+            // 
             // tabControl
             // 
             this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -406,7 +447,7 @@ namespace Lucene.Net.LukeNet
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabOverview);
             this.tabControl.Controls.Add(this.tabDocuments);
-            this.tabControl.Controls.Add(this.tabSearch);
+            this.tabControl.Controls.Add(this.searchTabPage);
             this.tabControl.Controls.Add(this.tabFiles);
             this.tabControl.Controls.Add(this.pluginsTabPage);
             this.tabControl.ImageList = this.imageList;
@@ -748,21 +789,10 @@ namespace Lucene.Net.LukeNet
             this.tabDocuments.ImageIndex = 1;
             this.tabDocuments.Location = new System.Drawing.Point(4, 23);
             this.tabDocuments.Name = "tabDocuments";
-            this.tabDocuments.Size = new System.Drawing.Size(752, 509);
+            this.tabDocuments.Size = new System.Drawing.Size(752, 498);
             this.tabDocuments.TabIndex = 1;
             this.tabDocuments.Text = "Documents";
             this.tabDocuments.Resize += new System.EventHandler(this.tabDocuments_Resize);
-            // 
-            // btnTermVector
-            // 
-            this.btnTermVector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnTermVector.Location = new System.Drawing.Point(8, 477);
-            this.btnTermVector.Name = "btnTermVector";
-            this.btnTermVector.Size = new System.Drawing.Size(128, 23);
-            this.btnTermVector.TabIndex = 3;
-            this.btnTermVector.Text = "Field\'s Term &Vector";
-            this.toolTip.SetToolTip(this.btnTermVector, "Show Term Vector of selected field");
-            this.btnTermVector.Click += new System.EventHandler(this.btnTermVector_Click);
             // 
             // labelInfoDocNum
             // 
@@ -784,33 +814,11 @@ namespace Lucene.Net.LukeNet
             // 
             this.labelCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelCopy.AutoSize = true;
-            this.labelCopy.Location = new System.Drawing.Point(379, 482);
+            this.labelCopy.Location = new System.Drawing.Point(379, 471);
             this.labelCopy.Name = "labelCopy";
             this.labelCopy.Size = new System.Drawing.Size(113, 13);
             this.labelCopy.TabIndex = 6;
             this.labelCopy.Text = "Copy text to Clipboard:";
-            // 
-            // buttonCopyAll
-            // 
-            this.buttonCopyAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCopyAll.Location = new System.Drawing.Point(623, 477);
-            this.buttonCopyAll.Name = "buttonCopyAll";
-            this.buttonCopyAll.Size = new System.Drawing.Size(120, 23);
-            this.buttonCopyAll.TabIndex = 5;
-            this.buttonCopyAll.Text = "C&omplete Document";
-            this.toolTip.SetToolTip(this.buttonCopyAll, "Copy all fields to Clipboard");
-            this.buttonCopyAll.Click += new System.EventHandler(this.buttonCopyAll_Click);
-            // 
-            // buttonCopySelected
-            // 
-            this.buttonCopySelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCopySelected.Location = new System.Drawing.Point(499, 477);
-            this.buttonCopySelected.Name = "buttonCopySelected";
-            this.buttonCopySelected.Size = new System.Drawing.Size(120, 23);
-            this.buttonCopySelected.TabIndex = 4;
-            this.buttonCopySelected.Text = "Se&lected Fields";
-            this.toolTip.SetToolTip(this.buttonCopySelected, "Copy selected fields to Clipboard");
-            this.buttonCopySelected.Click += new System.EventHandler(this.buttonCopySelected_Click);
             // 
             // labelLegend
             // 
@@ -841,7 +849,7 @@ namespace Lucene.Net.LukeNet
             this.listDocFields.Location = new System.Drawing.Point(8, 168);
             this.listDocFields.MultiSelect = false;
             this.listDocFields.Name = "listDocFields";
-            this.listDocFields.Size = new System.Drawing.Size(736, 301);
+            this.listDocFields.Size = new System.Drawing.Size(736, 290);
             this.listDocFields.TabIndex = 2;
             this.listDocFields.UseCompatibleStateImageBehavior = false;
             this.listDocFields.View = System.Windows.Forms.View.Details;
@@ -965,30 +973,6 @@ namespace Lucene.Net.LukeNet
             this.labelDoc.TabIndex = 12;
             this.labelDoc.Text = "Document:";
             // 
-            // buttonDeleteAllDocs
-            // 
-            this.buttonDeleteAllDocs.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonDeleteAllDocs.ImageIndex = 3;
-            this.buttonDeleteAllDocs.ImageList = this.imageList;
-            this.buttonDeleteAllDocs.Location = new System.Drawing.Point(123, 106);
-            this.buttonDeleteAllDocs.Name = "buttonDeleteAllDocs";
-            this.buttonDeleteAllDocs.Size = new System.Drawing.Size(112, 23);
-            this.buttonDeleteAllDocs.TabIndex = 11;
-            this.buttonDeleteAllDocs.Text = "Delete &All Docs";
-            this.buttonDeleteAllDocs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip.SetToolTip(this.buttonDeleteAllDocs, "Delete all docs with this term (NO WARNING!)");
-            this.buttonDeleteAllDocs.Click += new System.EventHandler(this.buttonDeleteAllDocs_Click);
-            // 
-            // buttonShowAllDocs
-            // 
-            this.buttonShowAllDocs.Location = new System.Drawing.Point(8, 106);
-            this.buttonShowAllDocs.Name = "buttonShowAllDocs";
-            this.buttonShowAllDocs.Size = new System.Drawing.Size(112, 23);
-            this.buttonShowAllDocs.TabIndex = 10;
-            this.buttonShowAllDocs.Text = "&Show All Docs";
-            this.toolTip.SetToolTip(this.buttonShowAllDocs, "Show all docs with this term");
-            this.buttonShowAllDocs.Click += new System.EventHandler(this.buttonShowAllDocs_Click);
-            // 
             // buttonShowNextDoc
             // 
             this.buttonShowNextDoc.Location = new System.Drawing.Point(123, 80);
@@ -1095,30 +1079,6 @@ namespace Lucene.Net.LukeNet
             this.groupDocNumber.TabStop = false;
             this.groupDocNumber.Text = "Browse by doc. number";
             // 
-            // btnReconstruct
-            // 
-            this.btnReconstruct.Location = new System.Drawing.Point(8, 104);
-            this.btnReconstruct.Name = "btnReconstruct";
-            this.btnReconstruct.Size = new System.Drawing.Size(112, 23);
-            this.btnReconstruct.TabIndex = 6;
-            this.btnReconstruct.Text = "&Reconstruct && Edit";
-            this.toolTip.SetToolTip(this.btnReconstruct, "Reconstruct all field contents &amp; edit doc");
-            this.btnReconstruct.Click += new System.EventHandler(this.btnReconstruct_Click);
-            // 
-            // buttonDelete
-            // 
-            this.buttonDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonDelete.ImageIndex = 3;
-            this.buttonDelete.ImageList = this.imageList;
-            this.buttonDelete.Location = new System.Drawing.Point(128, 104);
-            this.buttonDelete.Name = "buttonDelete";
-            this.buttonDelete.Size = new System.Drawing.Size(72, 23);
-            this.buttonDelete.TabIndex = 7;
-            this.buttonDelete.Text = "&Delete";
-            this.buttonDelete.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip.SetToolTip(this.buttonDelete, "Delete this document (NO WARNING)");
-            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
-            // 
             // labelIndDocs
             // 
             this.labelIndDocs.AutoSize = true;
@@ -1174,240 +1134,30 @@ namespace Lucene.Net.LukeNet
             this.labelBrowseDoc.TabIndex = 0;
             this.labelBrowseDoc.Text = "Doc. #:";
             // 
-            // tabSearch
+            // searchTabPage
             // 
-            this.tabSearch.Controls.Add(this.groupSearchOptions);
-            this.tabSearch.Controls.Add(this.btnExplain);
-            this.tabSearch.Controls.Add(this.labelSearchResult);
-            this.tabSearch.Controls.Add(this.labelSearchDocs);
-            this.tabSearch.Controls.Add(this.labelSearchRes);
-            this.tabSearch.Controls.Add(this.listSearch);
-            this.tabSearch.Controls.Add(this.buttonSearchDelete);
-            this.tabSearch.Controls.Add(this.buttonSearch);
-            this.tabSearch.ImageIndex = 2;
-            this.tabSearch.Location = new System.Drawing.Point(4, 23);
-            this.tabSearch.Name = "tabSearch";
-            this.tabSearch.Size = new System.Drawing.Size(752, 509);
-            this.tabSearch.TabIndex = 2;
-            this.tabSearch.Text = "Search";
-            // 
-            // groupSearchOptions
-            // 
-            this.groupSearchOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupSearchOptions.Controls.Add(this.btnUpdateParsedQuery);
-            this.groupSearchOptions.Controls.Add(this.textParsed);
-            this.groupSearchOptions.Controls.Add(this.labelParsedQuery);
-            this.groupSearchOptions.Controls.Add(this.comboFields);
-            this.groupSearchOptions.Controls.Add(this.labelDefaultField);
-            this.groupSearchOptions.Controls.Add(this.comboAnalyzer);
-            this.groupSearchOptions.Controls.Add(this.labelAnalyzer);
-            this.groupSearchOptions.Controls.Add(this.textSearch);
-            this.groupSearchOptions.Controls.Add(this.labelSearchExpr);
-            this.groupSearchOptions.Location = new System.Drawing.Point(8, 8);
-            this.groupSearchOptions.Name = "groupSearchOptions";
-            this.groupSearchOptions.Size = new System.Drawing.Size(624, 200);
-            this.groupSearchOptions.TabIndex = 0;
-            this.groupSearchOptions.TabStop = false;
-            this.groupSearchOptions.Text = "Search expression";
-            // 
-            // btnUpdateParsedQuery
-            // 
-            this.btnUpdateParsedQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdateParsedQuery.Location = new System.Drawing.Point(533, 169);
-            this.btnUpdateParsedQuery.Name = "btnUpdateParsedQuery";
-            this.btnUpdateParsedQuery.Size = new System.Drawing.Size(75, 23);
-            this.btnUpdateParsedQuery.TabIndex = 8;
-            this.btnUpdateParsedQuery.Text = "&Update";
-            this.btnUpdateParsedQuery.Click += new System.EventHandler(this.btnUpdateParsedQuery_Click);
-            // 
-            // textParsed
-            // 
-            this.textParsed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.textParsed.Location = new System.Drawing.Point(320, 97);
-            this.textParsed.Multiline = true;
-            this.textParsed.Name = "textParsed";
-            this.textParsed.Size = new System.Drawing.Size(288, 64);
-            this.textParsed.TabIndex = 7;
-            // 
-            // labelParsedQuery
-            // 
-            this.labelParsedQuery.AutoSize = true;
-            this.labelParsedQuery.Location = new System.Drawing.Point(320, 81);
-            this.labelParsedQuery.Name = "labelParsedQuery";
-            this.labelParsedQuery.Size = new System.Drawing.Size(97, 13);
-            this.labelParsedQuery.TabIndex = 6;
-            this.labelParsedQuery.Text = "&Parsed query view:";
-            // 
-            // comboFields
-            // 
-            this.comboFields.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboFields.Location = new System.Drawing.Point(96, 49);
-            this.comboFields.Name = "comboFields";
-            this.comboFields.Size = new System.Drawing.Size(104, 21);
-            this.comboFields.TabIndex = 3;
-            // 
-            // labelDefaultField
-            // 
-            this.labelDefaultField.AutoSize = true;
-            this.labelDefaultField.Location = new System.Drawing.Point(16, 53);
-            this.labelDefaultField.Name = "labelDefaultField";
-            this.labelDefaultField.Size = new System.Drawing.Size(66, 13);
-            this.labelDefaultField.TabIndex = 2;
-            this.labelDefaultField.Text = "&Default field:";
-            // 
-            // comboAnalyzer
-            // 
-            this.comboAnalyzer.Location = new System.Drawing.Point(96, 25);
-            this.comboAnalyzer.Name = "comboAnalyzer";
-            this.comboAnalyzer.Size = new System.Drawing.Size(256, 21);
-            this.comboAnalyzer.TabIndex = 1;
-            this.toolTip.SetToolTip(this.comboAnalyzer, "Analyzer to use for query parsing");
-            // 
-            // labelAnalyzer
-            // 
-            this.labelAnalyzer.AutoSize = true;
-            this.labelAnalyzer.Location = new System.Drawing.Point(16, 29);
-            this.labelAnalyzer.Name = "labelAnalyzer";
-            this.labelAnalyzer.Size = new System.Drawing.Size(50, 13);
-            this.labelAnalyzer.TabIndex = 0;
-            this.labelAnalyzer.Text = "&Analyzer:";
-            // 
-            // textSearch
-            // 
-            this.textSearch.Location = new System.Drawing.Point(16, 97);
-            this.textSearch.Multiline = true;
-            this.textSearch.Name = "textSearch";
-            this.textSearch.Size = new System.Drawing.Size(288, 64);
-            this.textSearch.TabIndex = 5;
-            // 
-            // labelSearchExpr
-            // 
-            this.labelSearchExpr.AutoSize = true;
-            this.labelSearchExpr.Location = new System.Drawing.Point(16, 81);
-            this.labelSearchExpr.Name = "labelSearchExpr";
-            this.labelSearchExpr.Size = new System.Drawing.Size(97, 13);
-            this.labelSearchExpr.TabIndex = 4;
-            this.labelSearchExpr.Text = "S&earch expression:";
-            // 
-            // btnExplain
-            // 
-            this.btnExplain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExplain.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnExplain.ImageIndex = 0;
-            this.btnExplain.ImageList = this.imageList;
-            this.btnExplain.Location = new System.Drawing.Point(592, 477);
-            this.btnExplain.Name = "btnExplain";
-            this.btnExplain.Size = new System.Drawing.Size(75, 23);
-            this.btnExplain.TabIndex = 3;
-            this.btnExplain.Text = "E&xplain";
-            this.btnExplain.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnExplain.Click += new System.EventHandler(this.btnExplain_Click);
-            // 
-            // labelSearchResult
-            // 
-            this.labelSearchResult.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelSearchResult.AutoSize = true;
-            this.labelSearchResult.Location = new System.Drawing.Point(8, 482);
-            this.labelSearchResult.Name = "labelSearchResult";
-            this.labelSearchResult.Size = new System.Drawing.Size(77, 13);
-            this.labelSearchResult.TabIndex = 8;
-            this.labelSearchResult.Text = "Search Result:";
-            // 
-            // labelSearchDocs
-            // 
-            this.labelSearchDocs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelSearchDocs.AutoSize = true;
-            this.labelSearchDocs.Location = new System.Drawing.Point(128, 482);
-            this.labelSearchDocs.Name = "labelSearchDocs";
-            this.labelSearchDocs.Size = new System.Drawing.Size(38, 13);
-            this.labelSearchDocs.TabIndex = 10;
-            this.labelSearchDocs.Text = "Doc(s)";
-            // 
-            // labelSearchRes
-            // 
-            this.labelSearchRes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelSearchRes.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelSearchRes.Location = new System.Drawing.Point(88, 482);
-            this.labelSearchRes.Name = "labelSearchRes";
-            this.labelSearchRes.Size = new System.Drawing.Size(32, 13);
-            this.labelSearchRes.TabIndex = 9;
-            this.labelSearchRes.Text = "0";
-            this.labelSearchRes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // listSearch
-            // 
-            this.listSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.listSearch.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderRank,
-            this.columnHeaderDocId});
-            this.listSearch.FullRowSelect = true;
-            this.listSearch.GridLines = true;
-            this.listSearch.Location = new System.Drawing.Point(8, 216);
-            this.listSearch.MultiSelect = false;
-            this.listSearch.Name = "listSearch";
-            this.listSearch.Size = new System.Drawing.Size(736, 253);
-            this.listSearch.TabIndex = 2;
-            this.toolTip.SetToolTip(this.listSearch, "Double-click on results to display all document fields");
-            this.listSearch.UseCompatibleStateImageBehavior = false;
-            this.listSearch.View = System.Windows.Forms.View.Details;
-            this.listSearch.DoubleClick += new System.EventHandler(this.listSearch_DoubleClick);
-            this.listSearch.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listSearch_ColumnClick);
-            // 
-            // columnHeaderRank
-            // 
-            this.columnHeaderRank.Text = "Rank %";
-            this.columnHeaderRank.Width = 50;
-            // 
-            // columnHeaderDocId
-            // 
-            this.columnHeaderDocId.Text = "Doc. Id";
-            // 
-            // buttonSearchDelete
-            // 
-            this.buttonSearchDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSearchDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSearchDelete.ImageIndex = 3;
-            this.buttonSearchDelete.ImageList = this.imageList;
-            this.buttonSearchDelete.Location = new System.Drawing.Point(672, 477);
-            this.buttonSearchDelete.Name = "buttonSearchDelete";
-            this.buttonSearchDelete.Size = new System.Drawing.Size(72, 23);
-            this.buttonSearchDelete.TabIndex = 4;
-            this.buttonSearchDelete.Text = "D&elete";
-            this.buttonSearchDelete.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip.SetToolTip(this.buttonSearchDelete, "Delete selected docs");
-            this.buttonSearchDelete.Click += new System.EventHandler(this.buttonSearchDelete_Click);
-            // 
-            // buttonSearch
-            // 
-            this.buttonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSearch.Location = new System.Drawing.Point(640, 16);
-            this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(104, 23);
-            this.buttonSearch.TabIndex = 1;
-            this.buttonSearch.Text = "&Search";
-            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
+            this.searchTabPage.ImageIndex = 2;
+            this.searchTabPage.Location = new System.Drawing.Point(4, 23);
+            this.searchTabPage.Name = "tabSearch";
+            this.searchTabPage.Size = new System.Drawing.Size(752, 498);
+            this.searchTabPage.TabIndex = 2;
+            this.searchTabPage.Text = "Search";
             // 
             // tabFiles
             // 
             this.tabFiles.ImageIndex = 4;
             this.tabFiles.Location = new System.Drawing.Point(4, 23);
             this.tabFiles.Name = "tabFiles";
-            this.tabFiles.Size = new System.Drawing.Size(752, 509);
+            this.tabFiles.Size = new System.Drawing.Size(752, 498);
             this.tabFiles.TabIndex = 3;
             this.tabFiles.Text = "Files";
             // 
             // pluginsTabPage
             // 
-            this.pluginsTabPage.Directory = null;
             this.pluginsTabPage.ImageIndex = 5;
-            this.pluginsTabPage.IndexReader = null;
             this.pluginsTabPage.Location = new System.Drawing.Point(4, 23);
             this.pluginsTabPage.Name = "pluginsTabPage";
-            this.pluginsTabPage.Size = new System.Drawing.Size(752, 509);
+            this.pluginsTabPage.Size = new System.Drawing.Size(752, 498);
             this.pluginsTabPage.TabIndex = 4;
             this.pluginsTabPage.Text = "Plugins";
             // 
@@ -1434,14 +1184,8 @@ namespace Lucene.Net.LukeNet
             this.groupTerm.PerformLayout();
             this.groupDocNumber.ResumeLayout(false);
             this.groupDocNumber.PerformLayout();
-            this.tabSearch.ResumeLayout(false);
-            this.tabSearch.PerformLayout();
-            this.groupSearchOptions.ResumeLayout(false);
-            this.groupSearchOptions.PerformLayout();
-            this.tabFiles.ResumeLayout(false);
-            this.tabFiles.PerformLayout();
-            this.pluginsTabPage.ResumeLayout(false);
-            this.pluginsTabPage.PerformLayout();
+            this.searchTabPage.ResumeLayout(false);
+            this.searchTabPage.PerformLayout();
             this.ResumeLayout(false);
 
         }

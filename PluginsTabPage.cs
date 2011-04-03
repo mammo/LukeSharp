@@ -20,12 +20,11 @@ namespace Lucene.Net.LukeNet
     {
 
         private List<LukePlugin> plugins = new List<LukePlugin>();
+        private Luke _luke;
 
-        public Lucene.Net.Store.Directory Directory { get; set; }
-        public IndexReader IndexReader { get; set; }
-        
-        public PluginsTabPage()
+        public PluginsTabPage(Luke luke)
         {
+            _luke = luke;
             InitializeComponent();
         }
 
@@ -95,8 +94,8 @@ namespace Lucene.Net.LukeNet
 
             foreach (LukePlugin plugin in plugins)
             {
-                plugin.SetDirectory(Directory);
-                plugin.SetIndexReader(IndexReader);
+                plugin.SetDirectory(_luke.Directory);
+                plugin.SetIndexReader(_luke.IndexReader);
                 try
                 {
                     plugin.Init();
@@ -105,7 +104,7 @@ namespace Lucene.Net.LukeNet
                 catch (Exception e)
                 {
                     plugins.Remove(plugin);
-                    ((Luke)Parent.Parent).ShowStatus("PLUGIN ERROR: " + e.Message);
+                    _luke.ShowStatus("PLUGIN ERROR: " + e.Message);
                     MessageBox.Show("PLUGIN ERROR: " + e.Message);
                 }
                 lstPlugins.Items.Add(plugin.GetPluginName());

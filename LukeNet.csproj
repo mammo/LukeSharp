@@ -175,6 +175,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Analyzing.cs" />
+    <Compile Include="SearchTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SearchTabPage.Designer.cs">
+      <DependentUpon>SearchTabPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="TermFrequency.cs" />
     <Compile Include="TermInfo.cs">
       <SubType>Code</SubType>
