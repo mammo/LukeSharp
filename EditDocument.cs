@@ -594,7 +594,7 @@ namespace Lucene.Net.LukeNet
             try
             {
                 luke.IndexReader.Close();
-                writer = new IndexWriter(dir, a, false);
+                writer = new IndexWriter(dir, a, IndexWriter.MaxFieldLength.UNLIMITED);
                 writer.AddDocument(doc);
             }
             catch (Exception exc)
@@ -605,7 +605,11 @@ namespace Lucene.Net.LukeNet
             {
                 try
                 {
-                    if (writer != null) writer.Close();
+                    if (writer != null)
+                    {
+                        writer.Commit();
+                        writer.Close();
+                    }
                 }
                 catch (Exception)
                 {

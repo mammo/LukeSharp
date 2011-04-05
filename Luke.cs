@@ -121,9 +121,7 @@ namespace Lucene.Net.LukeNet
             try
             {
                 indexReader.Close();
-                IndexWriter writer = new IndexWriter(dir,
-                    new WhitespaceAnalyzer(),
-                    false);
+                IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
                 writer.SetUseCompoundFile(useCompound);
                 long startSize = FilesTabPage.CalcTotalFileSize(dir);
                 DateTime startTime = DateTime.Now;
@@ -258,8 +256,9 @@ namespace Lucene.Net.LukeNet
             _readOnly = openIndexDlg.ReadOnlyIndex;
             bool force = openIndexDlg.UnlockIndex;
 
-            if (indexPath == String.Empty ||
-                !IndexReader.IndexExists(indexPath))
+            FSDirectory newDir = FSDirectory.Open(new DirectoryInfo(indexPath));
+
+            if (indexPath == String.Empty || !IndexReader.IndexExists(newDir))
             {
                 ErrorMessage(resources.GetString("InvalidPath"));
                 return;
@@ -282,9 +281,9 @@ namespace Lucene.Net.LukeNet
 
             try
             {
+                dir = newDir;
                 p.AddToMruList(indexPath);
 
-                dir = FSDirectory.GetDirectory(indexPath, false);
                 if (IndexWriter.IsLocked(dir))
                 {
                     if (_readOnly)
