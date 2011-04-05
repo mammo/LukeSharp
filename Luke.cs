@@ -239,7 +239,7 @@ namespace Lucene.Net.LukeNet
             SetFieldNames(fieldNames);
             searchTabPage.SetFieldnames(fieldNames);
 
-            overviewTabPage.Init();
+            overviewTabPage.Init(indexName);
 
             TermEnum termsEnum = indexReader.Terms(); //TODO: Duplicated
             int i = 0;

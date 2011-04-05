@@ -221,13 +221,14 @@ namespace Lucene.Net.LukeNet
             }
         }
 
-        internal void Init()
+        internal void Init(string indexName)
         {
             TermEnum termsEnum = _luke.IndexReader.Terms(); //TODO: Duplicated
             int i = 0;
             while (termsEnum.Next()) i++;
             termsEnum.Close();
             TermsNumber = i;
+            IndexName = indexName;
             IndexVersion = IndexReader.GetCurrentVersion(_luke.Directory).ToString();
             HasDeletions = _luke.IndexReader.HasDeletions().ToString();
             DocumentsNumber = _luke.IndexReader.NumDocs();
