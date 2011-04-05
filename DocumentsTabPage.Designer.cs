@@ -53,6 +53,9 @@ namespace Lucene.Net.LukeNet
         private System.Windows.Forms.Label labelLegend;
         private System.Windows.Forms.ListView listDocFields;
 
+        private System.Windows.Forms.ContextMenu contextMenu;
+        private System.Windows.Forms.MenuItem contextMenuItemShowTV;
+
         /// <summary> 
         /// Clean up any resources being used.
         /// </summary>
@@ -75,6 +78,8 @@ namespace Lucene.Net.LukeNet
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+
+            this.contextMenu = new System.Windows.Forms.ContextMenu();
 
             this.btnTermVector = new System.Windows.Forms.Button();
             this.buttonCopyAll = new System.Windows.Forms.Button();
@@ -491,7 +496,7 @@ namespace Lucene.Net.LukeNet
             this.columnHeaderTV,
             this.columnHeaderBoost,
             this.columnHeaderValue});
-            this.listDocFields.ContextMenu = _luke.contextMenu;
+            this.listDocFields.ContextMenu = this.contextMenu;
             this.listDocFields.FullRowSelect = true;
             this.listDocFields.GridLines = true;
             this.listDocFields.Location = new System.Drawing.Point(8, 168);

@@ -168,6 +168,12 @@
     <Compile Include="OpenIndex.designer.cs">
       <DependentUpon>OpenIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="OverviewTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="OverviewTabPage.Designer.cs">
+      <DependentUpon>OverviewTabPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="PluginsTabPage.cs">
       <SubType>Component</SubType>
     </Compile>

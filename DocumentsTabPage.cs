@@ -28,6 +28,7 @@ namespace Lucene.Net.LukeNet
         {
             _luke = luke;
             InitializeComponent();
+            SetDocumentsContextMenuItems();
         }
 
         public DocumentsTabPage(IContainer container)
@@ -35,6 +36,20 @@ namespace Lucene.Net.LukeNet
             container.Add(this);
 
             InitializeComponent();
+        }
+
+        private void SetDocumentsContextMenuItems()
+        {
+            contextMenu.MenuItems.Clear();
+
+            contextMenuItemShowTV = new MenuItem(_luke.resources.GetString("MenuShowTV"));
+            contextMenuItemShowTV.Click += new EventHandler(contextMenuItemShowTV_Click);
+            contextMenu.MenuItems.Add(contextMenuItemShowTV);
+        }
+
+        private void contextMenuItemShowTV_Click(object sender, System.EventArgs e)
+        {
+            ShowTV();
         }
 
         private void textDocNum_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -292,6 +307,7 @@ namespace Lucene.Net.LukeNet
             _luke.InitOverview();
         }
         #endregion //Buttons
+
         #region Clipboard
         private void buttonCopySelected_Click(object sender, System.EventArgs e)
         {
