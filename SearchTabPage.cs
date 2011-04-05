@@ -219,7 +219,7 @@ namespace Lucene.Net.LukeNet
         {
             textParsed.Text = q.ToString();
             DateTime start = DateTime.Now;
-            Hits hits = searcher.Search(q);
+            TopDocs hits = searcher.Search(q, null, Int16.MaxValue);
             _luke.ShowStatus(((TimeSpan)(DateTime.Now - start)).TotalMilliseconds.ToString() + " ms");
 
             listSearch.BeginUpdate();
@@ -227,7 +227,7 @@ namespace Lucene.Net.LukeNet
 
             try
             {
-                if (hits == null || hits.Length() == 0)
+                if (hits == null || hits.totalHits == 0)
                 {
                     if (listSearch.Columns.Count < 3)
                     {
@@ -245,17 +245,17 @@ namespace Lucene.Net.LukeNet
                     return;
                 }
 
-                labelSearchRes.Text = hits.Length().ToString();
+                labelSearchRes.Text = hits.totalHits.ToString();
 
-                searchedDocIds = new int[hits.Length()];
+                searchedDocIds = new int[hits.scoreDocs.Length];
 
-                for (int i = 0; i < hits.Length(); i++)
+                for (int i = 0; i < hits.scoreDocs.Length; i++)
                 {
-                    ListViewItem item = new ListViewItem((Math.Round((double)1000 * hits.Score(i), 1) / 10).ToString());
-                    item.SubItems.Add(hits.Id(i).ToString());
+                    ListViewItem item = new ListViewItem((Math.Round((double)1000 * hits.scoreDocs[i].score, 1) / 10).ToString());
+                    item.SubItems.Add(hits.scoreDocs[i].doc.ToString());
 
-                    Document doc = hits.Doc(i);
-                    searchedDocIds[i] = hits.Id(i);
+                    Document doc = searcher.Doc( hits.scoreDocs[i].doc);
+                    searchedDocIds[i] = hits.scoreDocs[i].doc;
 
                     for (int j = 0; j < _indexFields.Length; j++)
                     {
